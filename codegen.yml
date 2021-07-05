@@ -1,10 +1,10 @@
 overwrite: true
 schema: "http://localhost:4000/graphql"
 generates:
-  graphql/generated/mutations.tsx:
+  src/graphql/generated/mutations.tsx:
     documents:
-      - "graphql/mutations/*.graphql"
-      - "graphql/fragments/*.graphql"
+      - "src/graphql/mutations/*.graphql"
+      - "src/graphql/fragments/*.graphql"
     plugins:
       - "typescript"
       - "typescript-operations"
@@ -16,10 +16,10 @@ generates:
       withComponent: false
       exportFragmentSpreadSubTypes: true
       documentMode: graphQLTag
-  graphql/generated/graphqlTypes.tsx:
+  src/graphql/generated/graphqlTypes.tsx:
     documents:
-      - "graphql/queries/*.graphql"
-      - "graphql/fragments/*.graphql"
+      - "src/graphql/queries/*.graphql"
+      - "src/graphql/fragments/*.graphql"
     plugins:
       - "typescript"
       - "typescript-operations"
@@ -31,10 +31,10 @@ generates:
       withComponent: false
       exportFragmentSpreadSubTypes: true
       documentMode: graphQLTag
-  graphql/generated/page.tsx:
+  src/graphql/generated/page.tsx:
     documents:
-      - "graphql/queries/*.graphql"
-      - "graphql/fragments/*.graphql"
+      - "src/graphql/queries/*.graphql"
+      - "src/graphql/fragments/*.graphql"
     config:
       documentMode: external
       importDocumentNodeExternallyFrom: ./graphqlTypes
