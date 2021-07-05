@@ -1,0 +1,36 @@
+@import "../helpers/variables";
+@import "bulma/sass/utilities/mixins.sass";
+
+$pillar-width: 100px;
+$mobile-pillar-width: 25px;
+
+$small-pillar-width: 50px;
+
+.pillar {
+  width: $pillar-width;
+  background-color: $primary-dark;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  @include mobile {
+    width: $mobile-pillar-width;
+  }
+}
+
+.pillar_1 {
+  left: 0;
+}
+.pillar_2 {
+  right: 0;
+}
+
+.children {
+  max-width: calc(100% - 2 * #{$pillar-width});
+  margin-left: $pillar-width;
+  margin-right: $pillar-width;
+  @include mobile {
+    max-width: calc(100% - 2 * #{$mobile-pillar-width});
+    margin-left: $mobile-pillar-width;
+    margin-right: $mobile-pillar-width;
+  }
+}

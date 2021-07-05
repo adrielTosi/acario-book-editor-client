@@ -2,3 +2,13 @@
 @import "~bulma";
 
 @import "./helpers/typography";
+@import "./helpers/global";
+
+body,
+html {
+  height: 100%;
+}
+
+body {
+  background-color: $bg-t;
+}
