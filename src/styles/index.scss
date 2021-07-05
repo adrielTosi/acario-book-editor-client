@@ -1,1 +1,4 @@
-@import "./bulma.scss";
+@import "./helpers/variables";
+@import "~bulma";
+
+@import "./helpers/typography";
