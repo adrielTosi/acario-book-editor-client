@@ -17,7 +17,7 @@ export const withApollo = (Comp: NextPage) => (props: any) => {
 };
 
 export const getApolloClient = (
-  ctx?: any,
+  _?: any,
   initialState?: NormalizedCacheObject
 ) => {
   return new ApolloClient({
