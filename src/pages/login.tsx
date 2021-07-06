@@ -1,11 +1,12 @@
-import { withApollo } from "apollo/withApollo";
+import React, { useState } from "react";
+import { Field, Form, Formik } from "formik";
+import * as Yup from "yup";
+import { useRouter } from "next/router";
+
 import Box from "components/common/Box/Box";
 import PillarLayout from "components/layout/PillarLayout";
-import { Formik, Form, Field } from "formik";
+import { withApollo } from "apollo/withApollo";
 import { useLoginMutation } from "graphql/generated/mutations";
-import React from "react";
-
-import * as Yup from "yup";
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email("Please enter valid email.").required("Required"),
@@ -14,6 +15,8 @@ const LoginSchema = Yup.object().shape({
 
 const Login = () => {
   const [login] = useLoginMutation();
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   return (
     <PillarLayout>
@@ -31,12 +34,21 @@ const Login = () => {
                     }}
                     validationSchema={LoginSchema}
                     onSubmit={async (values) => {
-                      const userData = await login({
-                        variables: {
-                          email: values.email,
-                          password: values.password,
-                        },
-                      });
+                      try {
+                        await login({
+                          variables: {
+                            email: values.email,
+                            password: values.password,
+                          },
+                        });
+                        if (typeof router.query.next === "string") {
+                          router.push(router.query.next);
+                        } else {
+                          router.push("/");
+                        }
+                      } catch (err) {
+                        setError(err.message);
+                      }
                     }}
                   >
                     {({ errors, touched }) => (
@@ -54,6 +66,7 @@ const Login = () => {
                           ) : null}
                         </div>
                         <button type="submit">Login</button>
+                        {error && <div>{error}</div>}
                       </Form>
                     )}
                   </Formik>
