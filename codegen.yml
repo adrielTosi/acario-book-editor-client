@@ -45,7 +45,7 @@ generates:
       # excludePatternsOptions: 'i'
       # customDataIdFromObjectName: 'test'
       # customDataIdFromObjectImport: 'abc'
-      apolloClientInstanceImport: "./apollo/withApollo"
+      apolloClientInstanceImport: "apollo/withApollo"
     preset: import-types
     presetConfig:
       typesPath: ./graphqlTypes

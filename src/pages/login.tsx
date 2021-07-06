@@ -1,6 +1,8 @@
+import { withApollo } from "apollo/withApollo";
 import Box from "components/common/Box/Box";
 import PillarLayout from "components/layout/PillarLayout";
 import { Formik, Form, Field } from "formik";
+import { useLoginMutation } from "graphql/generated/mutations";
 import React from "react";
 
 import * as Yup from "yup";
@@ -10,7 +12,9 @@ const LoginSchema = Yup.object().shape({
   password: Yup.string().min(2, "Too Short!").required("Required"),
 });
 
-export default function Login() {
+const Login = () => {
+  const [login] = useLoginMutation();
+
   return (
     <PillarLayout>
       <div className="columns is-centered is-vcentered is-gapless is-full-height is-mobile">
@@ -26,9 +30,13 @@ export default function Login() {
                       password: "",
                     }}
                     validationSchema={LoginSchema}
-                    onSubmit={(values) => {
-                      // same shape as initial values
-                      console.log(values);
+                    onSubmit={async (values) => {
+                      const userData = await login({
+                        variables: {
+                          email: values.email,
+                          password: values.password,
+                        },
+                      });
                     }}
                   >
                     {({ errors, touched }) => (
@@ -57,4 +65,6 @@ export default function Login() {
       </div>
     </PillarLayout>
   );
-}
+};
+
+export default withApollo(Login);
