@@ -75,11 +75,6 @@ export type InputUpdateChapter = {
   text?: Maybe<Scalars["String"]>;
 };
 
-export type InputUpdateChapterNumber = {
-  chapterId: Scalars["String"];
-  newChapterNumber: Scalars["Int"];
-};
-
 export type Mutation = {
   __typename?: "Mutation";
   createUser: User;
@@ -87,7 +82,6 @@ export type Mutation = {
   logout: Scalars["Boolean"];
   createBook: Book;
   deleteBook: Scalars["Boolean"];
-  updateChapterNumber: Chapter;
   createChapter: Chapter;
   updateChapter: Chapter;
   deleteChapter: Scalars["Boolean"];
@@ -111,10 +105,6 @@ export type MutationCreateBookArgs = {
 
 export type MutationDeleteBookArgs = {
   bookId: Scalars["String"];
-};
-
-export type MutationUpdateChapterNumberArgs = {
-  updateData: InputUpdateChapterNumber;
 };
 
 export type MutationCreateChapterArgs = {
