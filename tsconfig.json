@@ -25,7 +25,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "baseUrl": "src",
+    "baseUrl": "./src",
     "paths": {
       "cssModules": ["src/styles/modules/*"]
     }

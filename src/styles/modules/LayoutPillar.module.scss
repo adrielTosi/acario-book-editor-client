@@ -6,6 +6,18 @@ $mobile-pillar-width: 25px;
 
 $small-pillar-width: 50px;
 
+.wrapper {
+  height: 100vh;
+  max-width: calc(100% - 2 * #{$pillar-width});
+  margin-left: $pillar-width;
+  margin-right: $pillar-width;
+  @include mobile {
+    max-width: calc(100% - 2 * #{$mobile-pillar-width});
+    margin-left: $mobile-pillar-width;
+    margin-right: $mobile-pillar-width;
+  }
+}
+
 .pillar {
   width: $pillar-width;
   background-color: $primary-dark;
@@ -25,12 +37,7 @@ $small-pillar-width: 50px;
 }
 
 .children {
-  max-width: calc(100% - 2 * #{$pillar-width});
-  margin-left: $pillar-width;
-  margin-right: $pillar-width;
-  @include mobile {
-    max-width: calc(100% - 2 * #{$mobile-pillar-width});
-    margin-left: $mobile-pillar-width;
-    margin-right: $mobile-pillar-width;
-  }
+  height: 100%;
+  overflow: auto;
+  padding: 0 1rem;
 }

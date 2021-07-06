@@ -5,7 +5,7 @@ export interface IPillarLayoutProps {
   children: JSX.Element;
 }
 
-export const PillarLayout = ({ children }: IPillarLayoutProps) => {
+const PillarLayout = ({ children }: IPillarLayoutProps) => {
   return (
     <div className={style.wrapper}>
       <div className={`${style.pillar} ${style.pillar_1}`}></div>
