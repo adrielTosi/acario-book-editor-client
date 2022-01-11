@@ -5,15 +5,17 @@ import { useRouter } from "next/router";
 
 import Box from "components/common/Box/Box";
 import { withApollo } from "apollo/withApollo";
-import { useLoginMutation } from "graphql/generated/mutations";
+import { useRegisterMutation } from "graphql/generated/mutations";
 
-const LoginSchema = Yup.object().shape({
+const RegisterSchema = Yup.object().shape({
+  name: Yup.string().required("Required"),
+  username: Yup.string().required("Required"),
   email: Yup.string().email("Please enter valid email.").required("Required"),
   password: Yup.string().min(2, "Too Short!").required("Required"),
 });
 
 const Login = () => {
-  const [login] = useLoginMutation();
+  const [register] = useRegisterMutation();
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
@@ -27,14 +29,18 @@ const Login = () => {
               <Box>
                 <Formik
                   initialValues={{
+                    name: "",
+                    username: "",
                     email: "",
                     password: "",
                   }}
-                  validationSchema={LoginSchema}
+                  validationSchema={RegisterSchema}
                   onSubmit={async (values) => {
                     try {
-                      await login({
+                      await register({
                         variables: {
+                          name: values.name,
+                          username: values.username,
                           email: values.email,
                           password: values.password,
                         },
@@ -52,10 +58,22 @@ const Login = () => {
                   {({ errors, touched }) => (
                     <Form>
                       <div>
+                        name
+                        <Field name="name" type="text" />
+                        {errors.name && touched.name ? <div>{errors.name}</div> : null}
+                      </div>
+                      <div>
+                        username
+                        <Field name="username" type="text" />
+                        {errors.username && touched.username ? <div>{errors.username}</div> : null}
+                      </div>
+                      <div>
+                        email
                         <Field name="email" type="email" />
                         {errors.email && touched.email ? <div>{errors.email}</div> : null}
                       </div>
                       <div>
+                        password
                         <Field name="password" type="password" />
                         {errors.password && touched.password ? <div>{errors.password}</div> : null}
                       </div>

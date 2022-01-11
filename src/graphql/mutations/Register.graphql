@@ -1,0 +1,5 @@
+mutation Register($name: String!, $email: String!, $username: String!, $password: String!) {
+  createUser(userData: { name: $name, email: $email, username: $username, password: $password }) {
+    ...CurrentUserFrag
+  }
+}

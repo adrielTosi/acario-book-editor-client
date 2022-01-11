@@ -13,6 +13,7 @@ export default function Home() {
             <h1 className="has-text-weight-semibold">Book Editor</h1>
             <div className="has-text-right">
               <Link href="/login">Login</Link>
+              <Link href="/register">Register</Link>
             </div>
           </div>
         </div>

@@ -1,0 +1,4 @@
+fragment CurrentUserFrag on User {
+  id
+  username
+}
