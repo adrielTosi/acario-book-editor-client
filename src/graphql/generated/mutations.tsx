@@ -81,7 +81,7 @@ export type ChapterReaction = {
 
 export type ChapterReactionResponse = {
   __typename?: "ChapterReactionResponse";
-  /** The book itself */
+  /** The chapter itself */
   chapter: Chapter;
   hasVoted: Scalars["Boolean"];
 };
@@ -90,6 +90,7 @@ export type Comment = {
   __typename?: "Comment";
   id: Scalars["ID"];
   text: Scalars["String"];
+  author: User;
   authorId: Scalars["String"];
   bookId?: Maybe<Scalars["String"]>;
   chapterId?: Maybe<Scalars["String"]>;
@@ -272,10 +273,11 @@ export type Query = {
   getTimelineChapters: PaginatedTimelineChapters;
   getChaptersFromBook: Array<Chapter>;
   getChapter: Chapter;
+  getChaptersFromUser: Array<Chapter>;
 };
 
 export type QueryGetUserArgs = {
-  id: Scalars["String"];
+  username: Scalars["String"];
 };
 
 export type QueryGetTimelineBooksArgs = {
@@ -285,6 +287,10 @@ export type QueryGetTimelineBooksArgs = {
 
 export type QueryGetBookArgs = {
   bookId: Scalars["String"];
+};
+
+export type QueryGetBooksArgs = {
+  userId?: Maybe<Scalars["String"]>;
 };
 
 export type QueryGetTimelineChaptersArgs = {
@@ -299,6 +305,10 @@ export type QueryGetChaptersFromBookArgs = {
 export type QueryGetChapterArgs = {
   chapterId: Scalars["String"];
   bookId?: Maybe<Scalars["String"]>;
+};
+
+export type QueryGetChaptersFromUserArgs = {
+  username: Scalars["String"];
 };
 
 export type Tag = {

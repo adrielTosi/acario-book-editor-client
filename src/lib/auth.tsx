@@ -13,6 +13,8 @@ export const usePrivateRoute = () => {
       router.replace("/login?next=" + router.pathname);
     }
   }, [data, router, loading, error]);
+
+  return data;
 };
 
 export const useAppLogout = () => {

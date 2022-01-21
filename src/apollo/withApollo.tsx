@@ -8,7 +8,7 @@ import {
 } from "@apollo/client";
 // import { isServerSide } from "./utils/isServerSide";
 
-export const withApollo = (Comp: NextPage) => (props: any) => {
+export const withApollo = (Comp: NextPage<any>) => (props: any) => {
   return (
     <ApolloProvider client={getApolloClient(null, props.apolloState)}>
       <Comp />
@@ -16,10 +16,7 @@ export const withApollo = (Comp: NextPage) => (props: any) => {
   );
 };
 
-export const getApolloClient = (
-  _?: any,
-  initialState?: NormalizedCacheObject
-) => {
+export const getApolloClient = (_?: any, initialState?: NormalizedCacheObject) => {
   return new ApolloClient({
     ssrMode: process.env.NODE_ENV === "production",
     link: createHttpLink({
