@@ -3,9 +3,9 @@ import { Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/router";
 
-import Box from "components/common/Box/Box";
 import { withApollo } from "apollo/withApollo";
 import { useLoginMutation } from "graphql/generated/mutations";
+import { Box } from "components/ui/Box";
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email("Please enter valid email.").required("Required"),
@@ -45,7 +45,7 @@ const Login = () => {
                         router.push("/");
                       }
                     } catch (err) {
-                      setError(err.message);
+                      setError((err as any).message);
                     }
                   }}
                 >

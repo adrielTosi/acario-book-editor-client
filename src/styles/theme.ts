@@ -10,8 +10,8 @@ export const size = {
 
 const theme = {
   colors: {
-    bg_primary: "#2E3438",
-    bg_comp_1: "#111B22",
+    bg_primary: "#111B22",
+    bg_comp_1: "#2E3438",
     bg_comp_1_light: "#19232B",
     bg_comp_2: "#383E42",
 

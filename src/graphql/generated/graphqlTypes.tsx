@@ -359,6 +359,17 @@ export type CurrentUserQuery = { __typename?: "Query" } & {
   currentUser: { __typename?: "User" } & CurrentUserFragFragment;
 };
 
+export type GetChapterQueryVariables = Exact<{
+  chapterId: Scalars["String"];
+}>;
+
+export type GetChapterQuery = { __typename?: "Query" } & {
+  getChapter: { __typename?: "Chapter" } & Pick<
+    Chapter,
+    "id" | "title" | "text" | "description"
+  >;
+};
+
 export type GetChaptersFromUserQueryVariables = Exact<{
   username: Scalars["String"];
 }>;
@@ -420,6 +431,20 @@ export const CurrentUserDocument = gql`
 export type CurrentUserQueryResult = Apollo.QueryResult<
   CurrentUserQuery,
   CurrentUserQueryVariables
+>;
+export const GetChapterDocument = gql`
+  query GetChapter($chapterId: String!) {
+    getChapter(chapterId: $chapterId) {
+      id
+      title
+      text
+      description
+    }
+  }
+`;
+export type GetChapterQueryResult = Apollo.QueryResult<
+  GetChapterQuery,
+  GetChapterQueryVariables
 >;
 export const GetChaptersFromUserDocument = gql`
   query getChaptersFromUser($username: String!) {

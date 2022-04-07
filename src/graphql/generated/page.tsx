@@ -62,6 +62,58 @@ export const ssrCurrentUser = {
   withPage: withPageCurrentUser,
   usePage: useCurrentUser,
 };
+export async function getServerPageGetChapter(
+  options: Omit<Apollo.QueryOptions<Types.GetChapterQueryVariables>, "query">,
+  ctx?: any
+) {
+  const apolloClient = getApolloClient(ctx);
+
+  const data = await apolloClient.query<Types.GetChapterQuery>({
+    ...options,
+    query: Operations.GetChapterDocument,
+  });
+
+  const apolloState = apolloClient.cache.extract();
+
+  return {
+    props: {
+      apolloState: apolloState,
+      data: data?.data,
+      error: data?.error ?? data?.errors ?? null,
+    },
+  };
+}
+export const useGetChapter = (
+  optionsFunc?: (
+    router: NextRouter
+  ) => QueryHookOptions<Types.GetChapterQuery, Types.GetChapterQueryVariables>
+) => {
+  const router = useRouter();
+  const options = optionsFunc ? optionsFunc(router) : {};
+  return useQuery(Operations.GetChapterDocument, options);
+};
+export type PageGetChapterComp = React.FC<{
+  data?: Types.GetChapterQuery;
+  error?: Apollo.ApolloError;
+}>;
+export const withPageGetChapter =
+  (
+    optionsFunc?: (
+      router: NextRouter
+    ) => QueryHookOptions<Types.GetChapterQuery, Types.GetChapterQueryVariables>
+  ) =>
+  (WrappedComponent: PageGetChapterComp): NextPage =>
+  (props) => {
+    const router = useRouter();
+    const options = optionsFunc ? optionsFunc(router) : {};
+    const { data, error } = useQuery(Operations.GetChapterDocument, options);
+    return <WrappedComponent {...props} data={data} error={error} />;
+  };
+export const ssrGetChapter = {
+  getServerPage: getServerPageGetChapter,
+  withPage: withPageGetChapter,
+  usePage: useGetChapter,
+};
 export async function getServerPageGetChaptersFromUser(
   options: Omit<
     Apollo.QueryOptions<Types.GetChaptersFromUserQueryVariables>,

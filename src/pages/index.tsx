@@ -15,7 +15,7 @@ const Home: NextPage<HomeProps> = (props) => {
       <div className="columns is-multiline is-full-height">
         {props.data.getChaptersFromUser.map(chapter =>
           <div className="column is-3">
-            <StoryCard title={chapter.title} description={chapter.description} published={chapter.createdAt} key={chapter.id} />
+            <StoryCard title={chapter.title} description={chapter.description} published={chapter.createdAt} key={chapter.id} id={chapter.id} />
           </div>
         )}
       </div>
