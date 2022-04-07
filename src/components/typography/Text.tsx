@@ -4,7 +4,7 @@ import { color, ColorProps } from "styled-system";
 
 export interface TextProps extends ColorProps {
   children: React.ReactNode;
-  type?: "large" | "regular" | "small";
+  size?: "large" | "regular" | "small";
 }
 
 const Comp = styled.p<TextProps>`
@@ -13,13 +13,13 @@ const Comp = styled.p<TextProps>`
   font-style: normal;
   font-weight: normal;
   ${(props) => {
-    if (props.type === "large") {
+    if (props.size === "large") {
       return css`
         font-size: 20px;
         line-height: 30px;
       `;
     }
-    if (props.type === "small") {
+    if (props.size === "small") {
       return css`
         font-size: 12px;
         line-height: 18px;
@@ -32,9 +32,9 @@ const Comp = styled.p<TextProps>`
   }}
 `;
 
-export const Text = ({ children, color, type = "regular", ...props }: TextProps) => {
+export const Text = ({ children, color, size: type = "regular", ...props }: TextProps) => {
   return (
-    <Comp {...props} color={color as any} type={type}>
+    <Comp {...props} color={color as any} size={type}>
       {children}
     </Comp>
   );
