@@ -1,22 +1,23 @@
 import styled from "styled-components"
 import theme from "styles/theme"
-import { H4 } from "./typography/Heading"
+import { H4, H4Link } from "./typography/Heading"
 import { Text } from "./typography/Text"
 
 export interface StoryCardProps {
   title: string
+  id: string
   description: string
   words?: number | string
   published: string
   tags?: string[]
 }
 
-export const StoryCard = ({ title, description, published }: StoryCardProps) => {
+export const StoryCard = ({ title, description, published, id }: StoryCardProps) => {
   const publishedDate = new Date(parseInt(published)).toLocaleDateString()
   return (
     <Wrapper>
       <TitleWrapper>
-        <H4>{title}</H4>
+        <H4Link href={`/story/${id}`}>{title}</H4Link>
       </TitleWrapper>
       <DescriptionWrapper>
         <Description>

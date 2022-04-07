@@ -13,6 +13,6 @@ export const GlobalStyle = createGlobalStyle`
    }
    body {
        color: ${({ theme }) => theme.colors.contrast_high};
-       background-color: ${({ theme }) => theme.colors.bg_comp_1}
+       background-color: ${({ theme }) => theme.colors.bg_primary}
    }
 `;

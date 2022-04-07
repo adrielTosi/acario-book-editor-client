@@ -1,0 +1,8 @@
+query GetChapter($chapterId: String!) {
+  getChapter(chapterId: $chapterId) {
+    id
+    title
+    text
+    description 
+  }
+}
