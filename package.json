@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "@apollo/client": "^3.3.20",
+    "@react-icons/all-files": "^4.1.0",
+    "@tiptap/react": "^2.0.0-beta.108",
+    "@tiptap/starter-kit": "^2.0.0-beta.183",
     "@types/styled-system": "^5.1.14",
     "bulma": "^0.9.3",
     "formik": "^2.2.9",
