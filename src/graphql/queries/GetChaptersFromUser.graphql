@@ -2,26 +2,9 @@ query getChaptersFromUser($username: String!) {
   getChaptersFromUser(username: $username) {
     id
     title
-    likes
-    dislikes
-    authorId
-    author {
-      name
-      username
-      id
-    }
-    book {
-      id
-      title
-    }
-    comments {
-      id
-      text
-      author {
-        name
-        username
-        id
-      }
-    }
+    text
+    description
+    createdAt
+    updatedAt
   }
 }

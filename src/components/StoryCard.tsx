@@ -3,30 +3,31 @@ import theme from "styles/theme"
 import { H4 } from "./typography/Heading"
 import { Text } from "./typography/Text"
 
-export interface IStoryCard {
-  title?: string
-  description?: string
+export interface StoryCardProps {
+  title: string
+  description: string
   words?: number | string
-  published?: string
+  published: string
   tags?: string[]
 }
 
-export const StoryCard = () => {
+export const StoryCard = ({ title, description, published }: StoryCardProps) => {
+  const publishedDate = new Date(parseInt(published)).toLocaleDateString()
   return (
     <Wrapper>
       <TitleWrapper>
-        <H4> Lorem ipsum dolor sit amet consectetur adipisicing elit. </H4>
+        <H4>{title}</H4>
       </TitleWrapper>
       <DescriptionWrapper>
         <Description>
           <Text color={theme.colors.contrast_med} >
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Placeat numquam optio, harum facilis et suscipit nemo voluptates culpa voluptas nostrum laborum perferendis unde est iste fugiat accusantium nulla facere dicta!
+            {description}
           </Text>
         </Description>
 
         <Details>
           <Text color={theme.colors.contrast_med} size="small">2.356 words</Text>
-          <Text color={theme.colors.contrast_low} size="small">17 July 2021</Text>
+          <Text color={theme.colors.contrast_low} size="small">{publishedDate}</Text>
         </Details>
       </DescriptionWrapper>
     </Wrapper>
@@ -34,7 +35,10 @@ export const StoryCard = () => {
 }
 
 const Wrapper = styled.div`
-  width: 100%
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 `
 
 const TitleWrapper = styled.div`
@@ -48,17 +52,21 @@ const TitleWrapper = styled.div`
 
 const DescriptionWrapper = styled.div`
   border-radius: 0.5em;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
   ${({ theme }) => `
     background-color: ${theme.colors.bg_comp_1_light}
-  `}
+  `};
 `
 
 const Description = styled.div`
   padding: 0.75em 1em;
-  border-bottom: ${props => `1px solid ${props.theme.colors.comp_outline}`}
-`
+  `
 
 const Details = styled.div`
+  border-top: ${props => `1px solid ${props.theme.colors.comp_outline}`};
   padding: 1em;
   display: flex;
   justify-content: space-between;

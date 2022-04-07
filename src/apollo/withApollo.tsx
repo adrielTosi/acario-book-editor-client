@@ -11,7 +11,7 @@ import {
 export const withApollo = (Comp: NextPage<any>) => (props: any) => {
   return (
     <ApolloProvider client={getApolloClient(null, props.apolloState)}>
-      <Comp {...props}/>
+      <Comp {...props} />
     </ApolloProvider>
   );
 };
@@ -26,3 +26,5 @@ export const getApolloClient = (_?: any, initialState?: NormalizedCacheObject) =
     cache: new InMemoryCache().restore(initialState || {}),
   });
 };
+
+export type TApolloClient = ReturnType<typeof getApolloClient>

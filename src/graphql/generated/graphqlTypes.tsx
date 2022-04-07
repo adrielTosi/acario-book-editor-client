@@ -55,6 +55,7 @@ export type Chapter = {
   id: Scalars["String"];
   title: Scalars["String"];
   text: Scalars["String"];
+  description: Scalars["String"];
   chapterNumber: Scalars["Float"];
   likes: Scalars["Int"];
   dislikes: Scalars["Int"];
@@ -107,6 +108,7 @@ export type InputCreateChapter = {
   title: Scalars["String"];
   bookId?: Maybe<Scalars["String"]>;
   text: Scalars["String"];
+  description: Scalars["String"];
   tags?: Maybe<Array<InputTag>>;
 };
 
@@ -327,6 +329,9 @@ export type User = {
   email: Scalars["String"];
   username: Scalars["String"];
   password: Scalars["String"];
+  numberOfFollowing: Scalars["Float"];
+  numberOfFollowers: Scalars["Float"];
+  _count: _Count;
   books: Array<Book>;
   chapters: Array<Chapter>;
   tags: Array<Tag>;
@@ -336,6 +341,11 @@ export type User = {
   bookReactions: Array<BookReaction>;
   chapterReactions: Array<ChapterReaction>;
   createdAt: Scalars["String"];
+};
+
+export type _Count = {
+  __typename?: "_Count";
+  chapters: Scalars["Float"];
 };
 
 export type CurrentUserFragFragment = { __typename?: "User" } & Pick<
@@ -357,24 +367,8 @@ export type GetChaptersFromUserQuery = { __typename?: "Query" } & {
   getChaptersFromUser: Array<
     { __typename?: "Chapter" } & Pick<
       Chapter,
-      "id" | "title" | "likes" | "dislikes" | "authorId"
-    > & {
-        author: { __typename?: "User" } & Pick<
-          User,
-          "name" | "username" | "id"
-        >;
-        book?: Maybe<{ __typename?: "Book" } & Pick<Book, "id" | "title">>;
-        comments?: Maybe<
-          Array<
-            { __typename?: "Comment" } & Pick<Comment, "id" | "text"> & {
-                author: { __typename?: "User" } & Pick<
-                  User,
-                  "name" | "username" | "id"
-                >;
-              }
-          >
-        >;
-      }
+      "id" | "title" | "text" | "description" | "createdAt" | "updatedAt"
+    >
   >;
 };
 
@@ -432,27 +426,10 @@ export const GetChaptersFromUserDocument = gql`
     getChaptersFromUser(username: $username) {
       id
       title
-      likes
-      dislikes
-      authorId
-      author {
-        name
-        username
-        id
-      }
-      book {
-        id
-        title
-      }
-      comments {
-        id
-        text
-        author {
-          name
-          username
-          id
-        }
-      }
+      text
+      description
+      createdAt
+      updatedAt
     }
   }
 `;
