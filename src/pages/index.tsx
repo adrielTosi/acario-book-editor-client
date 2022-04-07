@@ -1,23 +1,25 @@
 import React from "react";
 import Link from "next/link";
-
-import style from "styles/modules/indexPage.module.scss";
-import PillarLayout from "components/layout/PillarLayout";
+import { StoryCard } from "components/StoryCard";
 
 export default function Home() {
   return (
-    <PillarLayout>
-      <div className={style.wrapper}>
-        <div className="columns is-centered is-vcentered is-gapless is-full-height is-mobile">
-          <div className="column is-8">
-            <h1 className="has-text-weight-semibold">Book Editor</h1>
-            <div className="has-text-right">
-              <Link href="/login">Login</Link>
-              <Link href="/register">Register</Link>
-            </div>
-          </div>
+    <div className="container">
+      <div className="columns is-vcentered is-multiline is-full-height">
+        <div className="column is-3">
+          <StoryCard />
         </div>
+        <div className="column is-3">
+          <StoryCard />
+        </div>
+        <div className="column is-3">
+          <StoryCard />
+        </div>
+        <div className="column is-3">
+          <StoryCard />
+        </div>
+
       </div>
-    </PillarLayout>
+    </div>
   );
 }

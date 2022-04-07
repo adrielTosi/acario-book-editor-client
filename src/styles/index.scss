@@ -1,14 +1,8 @@
-@import "./helpers/variables";
-@import "~bulma";
-
-@import "./helpers/typography";
-@import "./helpers/global";
+@import "../../node_modules/bulma/sass/elements/container.sass";
+@import "../../node_modules/bulma/sass/grid/columns.sass";
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;600;700&display=swap');
 
 body,
 html {
   height: 100%;
-}
-
-body {
-  background-color: $bg-t;
 }
