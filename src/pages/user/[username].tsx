@@ -9,8 +9,7 @@ const Username: NextPage<UsernameProps> = (props) => {
   // const { data: chapterData, error } = ssrGetChaptersFromUser.usePage((router) => ({
   //   variables: { username: router.query.username as string },
   // }));
-
-  if(props.error) {
+  if (props.error) {
     return <div>{props.error}</div>
   }
   return (
