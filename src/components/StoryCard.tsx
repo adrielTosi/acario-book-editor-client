@@ -44,7 +44,7 @@ const Wrapper = styled.div`
 
 const TitleWrapper = styled.div`
   padding: 0.5em 1em;
-  border-radius: 0.5em;
+  border-radius: 0.125em;
   margin-bottom: 8px;
   ${({ theme }) => `
     background-color: ${theme.colors.bg_comp_1_light}
@@ -52,7 +52,7 @@ const TitleWrapper = styled.div`
 `
 
 const DescriptionWrapper = styled.div`
-  border-radius: 0.5em;
+  border-radius: 0.125em;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
