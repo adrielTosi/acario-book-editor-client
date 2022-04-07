@@ -3,18 +3,21 @@ import { Box } from "components/ui/Box";
 import { ssrGetChaptersFromUser } from "graphql/generated/page";
 import { GetServerSideProps, NextPage } from "next";
 
-const Username: NextPage = (props) => {
-  const { data: chapterData, error } = ssrGetChaptersFromUser.usePage((router) => ({
-    variables: { username: router.query.username as string },
-  }));
+type UsernameProps = Awaited<ReturnType<typeof ssrGetChaptersFromUser.getServerPage>>["props"]
 
-  console.log(props);
+const Username: NextPage<UsernameProps> = (props) => {
+  // const { data: chapterData, error } = ssrGetChaptersFromUser.usePage((router) => ({
+  //   variables: { username: router.query.username as string },
+  // }));
 
+  if(props.error) {
+    return <div>{props.error}</div>
+  }
   return (
     <div className="columns is-centered">
       <div className="column is-3"></div>
       <div className="column is-9">
-        {chapterData?.getChaptersFromUser.map((chapter) => {
+        {props.data.getChaptersFromUser.map((chapter: any) => {
           return (
             <Box mb="12px" key={chapter.id}>
               <div>
@@ -44,7 +47,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       context
     );
     return res;
-  } catch (error) {
-    return { props: { error: (error as any).message } };
+  } catch (error: any) {
+    return { props: { error: error.message } };
   }
 };
