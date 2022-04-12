@@ -14,16 +14,19 @@ import {
   PositionProps,
   space,
   SpaceProps,
+  TypographyProps,
+  typography
 } from "styled-system";
 
 export interface BoxProps
   extends SpaceProps,
-    ColorProps,
-    LayoutProps,
-    FlexboxProps,
-    BackgroundProps,
-    BorderProps,
-    PositionProps {}
+  ColorProps,
+  LayoutProps,
+  FlexboxProps,
+  BackgroundProps,
+  BorderProps,
+  PositionProps,
+  TypographyProps { }
 
 export const Box = styled.div<BoxProps>`
   ${space}
@@ -33,4 +36,5 @@ export const Box = styled.div<BoxProps>`
   ${background}
   ${border}
   ${position}
+  ${typography}
 `;

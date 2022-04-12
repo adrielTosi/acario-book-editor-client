@@ -306,7 +306,6 @@ export type QueryGetChaptersFromBookArgs = {
 
 export type QueryGetChapterArgs = {
   chapterId: Scalars["String"];
-  bookId?: Maybe<Scalars["String"]>;
 };
 
 export type QueryGetChaptersFromUserArgs = {
@@ -354,6 +353,17 @@ export type CurrentUserFragFragment = { __typename?: "User" } & Pick<
   "id" | "username"
 >;
 
+export type CreateChapterMutationVariables = Exact<{
+  chapterData: InputCreateChapter;
+}>;
+
+export type CreateChapterMutation = { __typename?: "Mutation" } & {
+  createChapter: { __typename?: "Chapter" } & Pick<
+    Chapter,
+    "id" | "title" | "text" | "description"
+  >;
+};
+
 export type LoginMutationVariables = Exact<{
   email: Scalars["String"];
   password: Scalars["String"];
@@ -387,6 +397,59 @@ export const CurrentUserFragFragmentDoc = gql`
     username
   }
 `;
+export const CreateChapterDocument = gql`
+  mutation CreateChapter($chapterData: InputCreateChapter!) {
+    createChapter(chapterData: $chapterData) {
+      id
+      title
+      text
+      description
+    }
+  }
+`;
+export type CreateChapterMutationFn = Apollo.MutationFunction<
+  CreateChapterMutation,
+  CreateChapterMutationVariables
+>;
+
+/**
+ * __useCreateChapterMutation__
+ *
+ * To run a mutation, you first call `useCreateChapterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateChapterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createChapterMutation, { data, loading, error }] = useCreateChapterMutation({
+ *   variables: {
+ *      chapterData: // value for 'chapterData'
+ *   },
+ * });
+ */
+export function useCreateChapterMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateChapterMutation,
+    CreateChapterMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    CreateChapterMutation,
+    CreateChapterMutationVariables
+  >(CreateChapterDocument, options);
+}
+export type CreateChapterMutationHookResult = ReturnType<
+  typeof useCreateChapterMutation
+>;
+export type CreateChapterMutationResult =
+  Apollo.MutationResult<CreateChapterMutation>;
+export type CreateChapterMutationOptions = Apollo.BaseMutationOptions<
+  CreateChapterMutation,
+  CreateChapterMutationVariables
+>;
 export const LoginDocument = gql`
   mutation Login($email: String!, $password: String!) {
     login(password: $password, email: $email) {
