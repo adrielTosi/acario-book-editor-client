@@ -1,7 +1,6 @@
 import styled, { css } from "styled-components"
 import { IconType, IconContext } from "@react-icons/all-files"
 import theme from "styles/theme"
-import { backgroundColor } from "styled-system"
 
 interface MenuButtonProps {
   Icon: IconType

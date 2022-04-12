@@ -1,0 +1,8 @@
+mutation CreateChapter($chapterData: InputCreateChapter!) {
+  createChapter(chapterData: $chapterData) {
+    id
+    title
+  	text
+    description
+  }
+}

@@ -4,6 +4,7 @@ import { space, SpaceProps } from "styled-system";
 export interface ButtonProps extends SpaceProps {
   variant?: "primary" | "secondary";
   pill?: boolean;
+  loading?: boolean
 }
 
 export const Button = styled.button<ButtonProps>`

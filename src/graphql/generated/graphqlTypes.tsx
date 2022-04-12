@@ -305,7 +305,6 @@ export type QueryGetChaptersFromBookArgs = {
 
 export type QueryGetChapterArgs = {
   chapterId: Scalars["String"];
-  bookId?: Maybe<Scalars["String"]>;
 };
 
 export type QueryGetChaptersFromUserArgs = {
