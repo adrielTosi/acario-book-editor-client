@@ -1,16 +1,30 @@
+import TextAlign from "@tiptap/extension-text-align";
+import { useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
 import { withApollo } from "apollo/withApollo"
+import { TextEditor } from "components/TextEditor/Editor";
 import { H1 } from "components/typography/Heading";
 import { Text } from "components/typography/Text";
 import { Box } from "components/ui/Box";
 import { GetChapterQuery } from "graphql/generated/graphqlTypes";
 import { ssrGetChapter } from "graphql/generated/page";
 import { GetServerSideProps, NextPage } from "next";
-import theme from "styles/theme";
 import { ServerSideProps } from "types/ServerSideProps";
 
 type StoryProps = ServerSideProps<GetChapterQuery>
 
 const Story: NextPage<StoryProps> = ({ error, data }) => {
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      })
+    ],
+    content: data.getChapter.text,
+    editable: false
+  })
+
   if (error) {
     return (
       <div className="container has-text-centered">{error}</div>
@@ -25,9 +39,9 @@ const Story: NextPage<StoryProps> = ({ error, data }) => {
         <Text>{data.getChapter.description}</Text>
       </Box>
 
-      <Box backgroundColor={theme.colors.bg_comp_1_light} padding="2em 1em" borderRadius="8px">
-        {data.getChapter.text}
-      </Box>
+
+      <TextEditor editor={editor} readOnly />
+
     </div>
   )
 }
