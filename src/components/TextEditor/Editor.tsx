@@ -6,14 +6,15 @@ import { Menu } from './Menu'
 
 type TextEditorProps = {
   editor: Editor | null
+  readOnly?: boolean
 }
 
-export const TextEditor = ({ editor }: TextEditorProps) => {
+export const TextEditor = ({ editor, readOnly }: TextEditorProps) => {
   return (
     <>
-      <Menu editor={editor} />
-      <EditorBox backgroundColor={theme.colors.bg_comp_2} padding="1em" >
-        <EditorContent editor={editor} />
+      {!readOnly && <Menu editor={editor} />}
+      <EditorBox backgroundColor={theme.colors.bg_comp_1_light} padding="1em" >
+        <EditorContent editor={editor} readOnly={readOnly} />
       </EditorBox>
     </>
   )
