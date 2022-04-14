@@ -1,7 +1,4 @@
-import TextAlign from "@tiptap/extension-text-align";
-import { useEditor } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import { withApollo } from "apollo/withApollo"
+import { withApollo } from "apollo/withApollo";
 import { TextEditor } from "components/TextEditor/Editor";
 import { H1 } from "components/typography/Heading";
 import { Text } from "components/typography/Text";

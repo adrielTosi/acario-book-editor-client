@@ -1,16 +1,14 @@
-import TextAlign from '@tiptap/extension-text-align';
-import { useEditor } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
 import { withApollo } from 'apollo/withApollo';
 import { TextEditor } from "components/TextEditor/Editor";
 import { Text } from "components/typography/Text";
 import { Box } from "components/ui/Box";
 import { Button } from 'components/ui/Button';
-import { Field, Form, Formik } from "formik";
+import { StyledField } from 'components/ui/StyledField';
+import { StyledLabel } from 'components/ui/StyledLabel';
+import { Form, Formik } from "formik";
 import { useCreateChapterMutation } from 'graphql/generated/mutations';
 import { useTipTap } from 'lib/hooks/UseTipTap';
 import router from 'next/router';
-import styled from "styled-components";
 import theme from "styles/theme";
 import * as Yup from "yup";
 
@@ -51,14 +49,14 @@ const Create = () => {
         {({ errors, values, handleChange }) => (
           <Form>
             <Box mb="1em">
-              <Label htmlFor="title">Title: </Label>
+              <StyledLabel htmlFor="title">Title: </StyledLabel>
               <StyledField name="title" type="text" />
               {errors && <span>{errors.title}</span>}
             </Box>
 
             <Box mb="1em">
               <Box display="flex" justifyContent="space-between" alignItems="flex-end">
-                <Label htmlFor="description">Description: </Label>
+                <StyledLabel htmlFor="description">Description: </StyledLabel>
                 <Text size="small" color={theme.colors.contrast_low}>{values.description.length}/400</Text>
 
               </Box>
@@ -77,23 +75,5 @@ const Create = () => {
     </Box>
   )
 }
-
-const Label = styled.label`
-  font-size: 16px;
-  line-height: 24px;
-  font-family: ${(props) => props.theme.font.body};
-  font-style: normal;
-  font-weight: normal;
-`
-
-const StyledField = styled(Field)`
-  width: 100%;
-  background-color: transparent;
-  border: ${props => `1px solid ${props.theme.colors.comp_outline}`};
-  border-radius: 4px;
-  padding: 1em;
-  color: ${props => `${props.theme.colors.contrast_high}`};
-  resize: vertical
-`
 
 export default withApollo(Create)
