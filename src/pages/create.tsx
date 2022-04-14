@@ -8,6 +8,7 @@ import { Box } from "components/ui/Box";
 import { Button } from 'components/ui/Button';
 import { Field, Form, Formik } from "formik";
 import { useCreateChapterMutation } from 'graphql/generated/mutations';
+import { useTipTap } from 'lib/hooks/UseTipTap';
 import router from 'next/router';
 import styled from "styled-components";
 import theme from "styles/theme";
@@ -26,15 +27,7 @@ const initialValues = {
 const Create = () => {
   const [createChapter] = useCreateChapterMutation()
 
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-      TextAlign.configure({
-        types: ['heading', 'paragraph'],
-      })
-    ],
-    content: '<p>Hello World! 🌎️</p>',
-  })
+  const editor = useTipTap()
 
   const handleSubmit = async ({ title, description }: typeof initialValues) => {
     const text = editor?.getHTML().toString()

@@ -10,7 +10,10 @@ interface MenuButtonProps {
 export const MenuButton = ({ Icon, onClick, active }: MenuButtonProps) => {
   return (
     <IconContext.Provider value={{ color: theme.colors.contrast_high, size: "1.25em" }}>
-      <Button onClick={onClick} active={active}><Icon /></Button>
+      <Button onClick={(e) => {
+        e.preventDefault()
+        onClick()
+      }} active={active}><Icon /></Button>
     </IconContext.Provider>
   )
 }
