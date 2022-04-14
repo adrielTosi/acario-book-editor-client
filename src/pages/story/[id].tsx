@@ -8,22 +8,14 @@ import { Text } from "components/typography/Text";
 import { Box } from "components/ui/Box";
 import { GetChapterQuery } from "graphql/generated/graphqlTypes";
 import { ssrGetChapter } from "graphql/generated/page";
+import { useTipTap } from "lib/hooks/UseTipTap";
 import { GetServerSideProps, NextPage } from "next";
 import { ServerSideProps } from "types/ServerSideProps";
 
 type StoryProps = ServerSideProps<GetChapterQuery>
 
 const Story: NextPage<StoryProps> = ({ error, data }) => {
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-      TextAlign.configure({
-        types: ['heading', 'paragraph'],
-      })
-    ],
-    content: data.getChapter.text,
-    editable: false
-  })
+  const editor = useTipTap({ content: data.getChapter.text, readOnly: true })
 
   if (error) {
     return (
@@ -31,7 +23,7 @@ const Story: NextPage<StoryProps> = ({ error, data }) => {
     )
   }
   return (
-    <div className="container is-max-desktop">
+    <Box className="container is-max-desktop" padding="0 8px">
       <Box marginBottom="1em">
         <H1>{data.getChapter.title}</H1>
       </Box>
@@ -42,7 +34,7 @@ const Story: NextPage<StoryProps> = ({ error, data }) => {
 
       <TextEditor editor={editor} readOnly />
 
-    </div>
+    </Box>
   )
 }
 

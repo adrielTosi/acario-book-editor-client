@@ -3,7 +3,7 @@ import Link from "next/link";
 import { StoryCard } from "components/StoryCard";
 import { withApollo } from "apollo/withApollo";
 import { GetServerSideProps, NextPage } from "next";
-import { ssrGetChaptersFromUser } from "graphql/generated/page";
+import { ssrCurrentUser, ssrGetChaptersFromUser } from "graphql/generated/page";
 import { GetChaptersFromUserQuery } from "graphql/generated/graphqlTypes";
 import { ServerSideProps } from "types/ServerSideProps";
 
@@ -27,12 +27,18 @@ export default withApollo(Home)
 
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  // const params = context.params;
+  const user = await ssrCurrentUser.getServerPage({
+    notifyOnNetworkStatusChange: true, context: {
+      headers: {
+        cookie: context.req.headers.cookie
+      }
+    }
+  }, context)
 
   try {
     const res = await ssrGetChaptersFromUser.getServerPage(
       {
-        variables: { username: "acario" },
+        variables: { username: user.props.data.currentUser.username },
         notifyOnNetworkStatusChange: true,
       },
       context

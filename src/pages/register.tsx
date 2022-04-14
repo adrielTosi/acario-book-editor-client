@@ -3,9 +3,9 @@ import { Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/router";
 
-import Box from "components/common/Box/Box";
 import { withApollo } from "apollo/withApollo";
 import { useRegisterMutation } from "graphql/generated/mutations";
+import { Box } from "components/ui/Box";
 
 const RegisterSchema = Yup.object().shape({
   name: Yup.string().required("Required"),
