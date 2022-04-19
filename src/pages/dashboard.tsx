@@ -8,36 +8,46 @@ import { GetChaptersFromUserQuery } from "graphql/generated/graphqlTypes";
 import { ServerSideProps } from "types/ServerSideProps";
 import { usePrivateRoute } from "lib/auth";
 
-type HomeProps = ServerSideProps<GetChaptersFromUserQuery>
+type HomeProps = ServerSideProps<GetChaptersFromUserQuery>;
 
 const Dasboard: NextPage<HomeProps> = (props) => {
-  usePrivateRoute()
+  usePrivateRoute();
+  if (props.error) {
+    return <div className="has-text-centered">{props.error}</div>;
+  }
   return (
     <div className="container">
       <div className="columns is-multiline is-full-height">
-        {props.data.getChaptersFromUser.map(chapter =>
+        {props.data.getChaptersFromUser.map((chapter) => (
           <div className="column is-3" key={chapter.id}>
-            <StoryCard title={chapter.title} description={chapter.description} published={chapter.createdAt} id={chapter.id} />
+            <StoryCard
+              title={chapter.title}
+              description={chapter.description}
+              published={chapter.createdAt}
+              id={chapter.id}
+            />
           </div>
-        )}
+        ))}
       </div>
     </div>
   );
-}
+};
 
-export default withApollo(Dasboard)
-
+export default withApollo(Dasboard);
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const user = await ssrCurrentUser.getServerPage({
-    notifyOnNetworkStatusChange: true, context: {
-      headers: {
-        cookie: context.req.headers.cookie
-      }
-    }
-  }, context)
-
   try {
+    const user = await ssrCurrentUser.getServerPage(
+      {
+        notifyOnNetworkStatusChange: true,
+        context: {
+          headers: {
+            cookie: context.req.headers.cookie,
+          },
+        },
+      },
+      context
+    );
     const res = await ssrGetChaptersFromUser.getServerPage(
       {
         variables: { username: user.props.data.currentUser.username },

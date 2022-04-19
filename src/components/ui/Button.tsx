@@ -2,15 +2,20 @@ import styled, { css } from "styled-components";
 import { space, SpaceProps } from "styled-system";
 
 export interface ButtonProps extends SpaceProps {
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "danger";
   pill?: boolean;
-  loading?: boolean
+  round?: boolean;
+  loading?: boolean;
 }
 
 export const Button = styled.button<ButtonProps>`
   border: none;
-  border-radius: ${(props) => (props.pill ? "999px" : "4px")};
-  padding: 8px 24px;
+  border-radius: ${(props) => (props.pill || props.round ? "999px" : "4px")};
+  padding: ${(props) => {
+    if (!props.round) {
+      return css`8px 24px`;
+    }
+  }};
   cursor: pointer;
   ${({ theme, variant }) => {
     if (variant === "secondary") {
@@ -22,6 +27,16 @@ export const Button = styled.button<ButtonProps>`
         }
         &:disabled {
           background-color: ${theme.colors.accent_2_200};
+          cursor: not-allowed;
+        }
+      `;
+    }
+    if (variant === "danger") {
+      return css`
+        background-color: ${theme.colors.danger};
+        color: ${theme.colors.contrast_high};
+        &:disabled {
+          background-color: ${theme.colors.danger_bg};
           cursor: not-allowed;
         }
       `;

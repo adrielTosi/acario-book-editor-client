@@ -34,7 +34,7 @@ const H2CSS = css`
 export const H2Link = styled.a<ColorProps>`
   ${H2CSS}
   `
-export const b = styled.h2<ColorProps>`
+export const H2 = styled.h2<ColorProps>`
   ${H2CSS}
   `;
 

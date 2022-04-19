@@ -149,11 +149,11 @@ export type InputTag = {
 };
 
 export type InputUpdateChapter = {
-  type: Scalars["String"];
-  bookId: Scalars["String"];
+  bookId?: Maybe<Scalars["String"]>;
   chapterId: Scalars["String"];
   title?: Maybe<Scalars["String"]>;
   text?: Maybe<Scalars["String"]>;
+  description?: Maybe<Scalars["String"]>;
 };
 
 export type Mutation = {
@@ -166,7 +166,7 @@ export type Mutation = {
   createChapter: Chapter;
   updateChapter: Chapter;
   addChapterToBook: Chapter;
-  deleteChapter: Scalars["Boolean"];
+  deleteChapter: Chapter;
   createTags: Array<Tag>;
   deleteTag: Scalars["Boolean"];
   followUser: Follow;
@@ -209,7 +209,6 @@ export type MutationAddChapterToBookArgs = {
 };
 
 export type MutationDeleteChapterArgs = {
-  bookId: Scalars["String"];
   chapterId: Scalars["String"];
 };
 
@@ -364,6 +363,14 @@ export type CreateChapterMutation = { __typename?: "Mutation" } & {
   >;
 };
 
+export type DeleteChapterMutationVariables = Exact<{
+  chapterId: Scalars["String"];
+}>;
+
+export type DeleteChapterMutation = { __typename?: "Mutation" } & {
+  deleteChapter: { __typename?: "Chapter" } & Pick<Chapter, "id">;
+};
+
 export type LoginMutationVariables = Exact<{
   email: Scalars["String"];
   password: Scalars["String"];
@@ -389,6 +396,17 @@ export type RegisterMutationVariables = Exact<{
 
 export type RegisterMutation = { __typename?: "Mutation" } & {
   createUser: { __typename?: "User" } & CurrentUserFragFragment;
+};
+
+export type UpdateChapterMutationVariables = Exact<{
+  chapterData: InputUpdateChapter;
+}>;
+
+export type UpdateChapterMutation = { __typename?: "Mutation" } & {
+  updateChapter: { __typename?: "Chapter" } & Pick<
+    Chapter,
+    "id" | "authorId" | "title" | "text" | "description"
+  >;
 };
 
 export const CurrentUserFragFragmentDoc = gql`
@@ -449,6 +467,56 @@ export type CreateChapterMutationResult =
 export type CreateChapterMutationOptions = Apollo.BaseMutationOptions<
   CreateChapterMutation,
   CreateChapterMutationVariables
+>;
+export const DeleteChapterDocument = gql`
+  mutation DeleteChapter($chapterId: String!) {
+    deleteChapter(chapterId: $chapterId) {
+      id
+    }
+  }
+`;
+export type DeleteChapterMutationFn = Apollo.MutationFunction<
+  DeleteChapterMutation,
+  DeleteChapterMutationVariables
+>;
+
+/**
+ * __useDeleteChapterMutation__
+ *
+ * To run a mutation, you first call `useDeleteChapterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteChapterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteChapterMutation, { data, loading, error }] = useDeleteChapterMutation({
+ *   variables: {
+ *      chapterId: // value for 'chapterId'
+ *   },
+ * });
+ */
+export function useDeleteChapterMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteChapterMutation,
+    DeleteChapterMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    DeleteChapterMutation,
+    DeleteChapterMutationVariables
+  >(DeleteChapterDocument, options);
+}
+export type DeleteChapterMutationHookResult = ReturnType<
+  typeof useDeleteChapterMutation
+>;
+export type DeleteChapterMutationResult =
+  Apollo.MutationResult<DeleteChapterMutation>;
+export type DeleteChapterMutationOptions = Apollo.BaseMutationOptions<
+  DeleteChapterMutation,
+  DeleteChapterMutationVariables
 >;
 export const LoginDocument = gql`
   mutation Login($email: String!, $password: String!) {
@@ -604,4 +672,58 @@ export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<
   RegisterMutation,
   RegisterMutationVariables
+>;
+export const UpdateChapterDocument = gql`
+  mutation UpdateChapter($chapterData: InputUpdateChapter!) {
+    updateChapter(chapterData: $chapterData) {
+      id
+      authorId
+      title
+      text
+      description
+    }
+  }
+`;
+export type UpdateChapterMutationFn = Apollo.MutationFunction<
+  UpdateChapterMutation,
+  UpdateChapterMutationVariables
+>;
+
+/**
+ * __useUpdateChapterMutation__
+ *
+ * To run a mutation, you first call `useUpdateChapterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateChapterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateChapterMutation, { data, loading, error }] = useUpdateChapterMutation({
+ *   variables: {
+ *      chapterData: // value for 'chapterData'
+ *   },
+ * });
+ */
+export function useUpdateChapterMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateChapterMutation,
+    UpdateChapterMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    UpdateChapterMutation,
+    UpdateChapterMutationVariables
+  >(UpdateChapterDocument, options);
+}
+export type UpdateChapterMutationHookResult = ReturnType<
+  typeof useUpdateChapterMutation
+>;
+export type UpdateChapterMutationResult =
+  Apollo.MutationResult<UpdateChapterMutation>;
+export type UpdateChapterMutationOptions = Apollo.BaseMutationOptions<
+  UpdateChapterMutation,
+  UpdateChapterMutationVariables
 >;
