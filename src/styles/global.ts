@@ -1,4 +1,4 @@
-import { createGlobalStyle } from "styled-components";
+import { createGlobalStyle, css } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle`
    *{
@@ -14,5 +14,15 @@ export const GlobalStyle = createGlobalStyle`
    body {
        color: ${({ theme }) => theme.colors.contrast_high};
        background-color: ${({ theme }) => theme.colors.bg_primary}
+   }
+   a {
+       ${props => {
+        return css`
+             color: ${props.theme.colors.accent_1_500};
+             &:hover {
+                 color: ${props.theme.colors.accent_1_600};
+             }
+           `
+    }}
    }
 `;

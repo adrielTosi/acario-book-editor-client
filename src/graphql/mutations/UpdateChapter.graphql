@@ -1,0 +1,9 @@
+mutation UpdateChapter($chapterData: InputUpdateChapter!) {
+  updateChapter(chapterData: $chapterData) {
+    id
+    authorId
+    title
+    text
+    description
+  }
+}

@@ -30,6 +30,13 @@ const theme = {
     accent_2_500: "#B449FD",
     accent_2_600: "#9237D3",
     accent_2_700: "rgba(180, 73, 253, 0.2)",
+
+    danger: "#DC3545",
+    danger_bg: "#F8E0E0",
+    success: "#28A745",
+    success_bg: "#FCF8E3",
+    warning: "#FFC107",
+    warning_bg: "#FCF8E3"
   },
 
   font: {

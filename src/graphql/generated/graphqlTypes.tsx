@@ -148,11 +148,11 @@ export type InputTag = {
 };
 
 export type InputUpdateChapter = {
-  type: Scalars["String"];
-  bookId: Scalars["String"];
+  bookId?: Maybe<Scalars["String"]>;
   chapterId: Scalars["String"];
   title?: Maybe<Scalars["String"]>;
   text?: Maybe<Scalars["String"]>;
+  description?: Maybe<Scalars["String"]>;
 };
 
 export type Mutation = {
@@ -165,7 +165,7 @@ export type Mutation = {
   createChapter: Chapter;
   updateChapter: Chapter;
   addChapterToBook: Chapter;
-  deleteChapter: Scalars["Boolean"];
+  deleteChapter: Chapter;
   createTags: Array<Tag>;
   deleteTag: Scalars["Boolean"];
   followUser: Follow;
@@ -208,7 +208,6 @@ export type MutationAddChapterToBookArgs = {
 };
 
 export type MutationDeleteChapterArgs = {
-  bookId: Scalars["String"];
   chapterId: Scalars["String"];
 };
 
@@ -365,7 +364,7 @@ export type GetChapterQueryVariables = Exact<{
 export type GetChapterQuery = { __typename?: "Query" } & {
   getChapter: { __typename?: "Chapter" } & Pick<
     Chapter,
-    "id" | "title" | "text" | "description"
+    "id" | "authorId" | "title" | "text" | "description"
   >;
 };
 
@@ -435,6 +434,7 @@ export const GetChapterDocument = gql`
   query GetChapter($chapterId: String!) {
     getChapter(chapterId: $chapterId) {
       id
+      authorId
       title
       text
       description

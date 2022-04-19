@@ -8,6 +8,7 @@ type UseTipTapProps = {
 }
 
 export const useTipTap = (props?: UseTipTapProps) => {
+  const isReadyOnly = props?.readOnly ?? false
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -16,7 +17,7 @@ export const useTipTap = (props?: UseTipTapProps) => {
       })
     ],
     content: props?.content || "<p>Hello World! 🌎️</p>",
-    editable: props?.readOnly || true
+    editable: !isReadyOnly
   })
   return editor
 }

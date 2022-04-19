@@ -6,12 +6,15 @@ import theme from "styles/theme";
 import { GlobalStyle } from "styles/global";
 import { Navbar } from "components/Navbar";
 import { Box } from "components/ui/Box";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.min.css";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />
       <Navbar />
+      <ToastContainer />
       <Box paddingTop="2em">
         <Component {...pageProps} />
       </Box>
