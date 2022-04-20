@@ -3,30 +3,16 @@ query GetUser($username: String!) {
     id
     name
     username
+    avatarType
+    avatarSeed
+    bio
+    numberOfFollowing
+    numberOfFollowers
+    _count {
+      chapters
+    }
     chapters {
-      id
-      title
-      likes
-      dislikes
-      tags {
-        label
-        value
-      }
-    }
-    books {
-      id
-      title
-      description
-      likes
-      dislikes
-    }
-    following {
-      leaderId
-      followId
-    }
-    followers {
-      leaderId
-      followId
+      ...Chapter
     }
   }
 }

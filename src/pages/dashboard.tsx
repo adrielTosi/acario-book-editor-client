@@ -1,31 +1,27 @@
 import React from "react";
 import Link from "next/link";
-import { StoryCard } from "components/StoryCard";
+import { StoryCard } from "components/StoryCard/StoryCard";
 import { withApollo } from "apollo/withApollo";
 import { GetServerSideProps, NextPage } from "next";
-import { ssrCurrentUser, ssrGetChaptersFromUser } from "graphql/generated/page";
-import { GetChaptersFromUserQuery } from "graphql/generated/graphqlTypes";
+import { ssrCurrentUser, ssrGetUser } from "graphql/generated/page";
+import { GetUserQuery } from "graphql/generated/graphqlTypes";
 import { ServerSideProps } from "types/ServerSideProps";
 import { usePrivateRoute } from "lib/auth";
 
-type HomeProps = ServerSideProps<GetChaptersFromUserQuery>;
+type HomeProps = ServerSideProps<GetUserQuery>;
 
 const Dasboard: NextPage<HomeProps> = (props) => {
   usePrivateRoute();
+  console.log(JSON.stringify(props.data, undefined, 2));
   if (props.error) {
     return <div className="has-text-centered">{props.error}</div>;
   }
   return (
     <div className="container">
       <div className="columns is-multiline is-full-height">
-        {props.data.getChaptersFromUser.map((chapter) => (
+        {props.data.getUser.chapters.map((chapter) => (
           <div className="column is-3" key={chapter.id}>
-            <StoryCard
-              title={chapter.title}
-              description={chapter.description}
-              published={chapter.createdAt}
-              id={chapter.id}
-            />
+            <StoryCard {...chapter} />
           </div>
         ))}
       </div>
@@ -37,6 +33,7 @@ export default withApollo(Dasboard);
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
+    // IS THIS CALL NECESSARY? PROBABLY NOT
     const user = await ssrCurrentUser.getServerPage(
       {
         notifyOnNetworkStatusChange: true,
@@ -48,10 +45,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
       context
     );
-    const res = await ssrGetChaptersFromUser.getServerPage(
+    const res = await ssrGetUser.getServerPage(
       {
         variables: { username: user.props.data.currentUser.username },
         notifyOnNetworkStatusChange: true,
+        context: {
+          headers: {
+            cookie: context.req.headers.cookie,
+          },
+        },
       },
       context
     );

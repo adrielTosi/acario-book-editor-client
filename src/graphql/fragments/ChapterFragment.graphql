@@ -1,0 +1,15 @@
+fragment Chapter on Chapter {
+  __typename
+  id
+  authorId
+  title
+  text
+  description
+  likes
+  dislikes
+  createdAt
+  reactions {
+    authorId
+    value
+  }
+}

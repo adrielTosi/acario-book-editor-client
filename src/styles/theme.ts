@@ -1,12 +1,12 @@
 export const size = {
-  mobileS: '320px',
-  mobileM: '375px',
-  mobileL: '425px',
-  tablet: '768px',
-  laptop: '1024px',
-  laptopL: '1440px',
-  desktop: '2560px'
-}
+  mobileS: "320px",
+  mobileM: "375px",
+  mobileL: "425px",
+  tablet: "768px",
+  laptop: "1024px",
+  laptopL: "1440px",
+  desktop: "2560px",
+};
 
 const theme = {
   colors: {
@@ -30,13 +30,14 @@ const theme = {
     accent_2_500: "#B449FD",
     accent_2_600: "#9237D3",
     accent_2_700: "rgba(180, 73, 253, 0.2)",
+    accent_2_bg_light: "rgba(180, 73, 253, 0.2)",
 
     danger: "#DC3545",
     danger_bg: "#F8E0E0",
     success: "#28A745",
     success_bg: "#FCF8E3",
     warning: "#FFC107",
-    warning_bg: "#FCF8E3"
+    warning_bg: "#FCF8E3",
   },
 
   font: {
@@ -52,10 +53,9 @@ const theme = {
     laptop: `(min-width: ${size.laptop})`,
     laptopL: `(min-width: ${size.laptopL})`,
     desktop: `(min-width: ${size.desktop})`,
-    desktopL: `(min-width: ${size.desktop})`
-  }
+    desktopL: `(min-width: ${size.desktop})`,
+  },
 };
-
 
 export type Theme = typeof theme;
 

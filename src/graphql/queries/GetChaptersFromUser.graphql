@@ -1,10 +1,5 @@
 query getChaptersFromUser($username: String!) {
   getChaptersFromUser(username: $username) {
-    id
-    title
-    text
-    description
-    createdAt
-    updatedAt
+    ...Chapter
   }
 }
