@@ -328,6 +328,9 @@ export type User = {
   email: Scalars["String"];
   username: Scalars["String"];
   password: Scalars["String"];
+  avatarType: Scalars["String"];
+  avatarSeed: Scalars["String"];
+  bio: Scalars["String"];
   numberOfFollowing: Scalars["Float"];
   numberOfFollowers: Scalars["Float"];
   _count: _Count;
@@ -347,6 +350,27 @@ export type _Count = {
   chapters: Scalars["Float"];
 };
 
+export type ChapterFragment = { __typename: "Chapter" } & Pick<
+  Chapter,
+  | "id"
+  | "authorId"
+  | "title"
+  | "text"
+  | "description"
+  | "likes"
+  | "dislikes"
+  | "createdAt"
+> & {
+    reactions?: Maybe<
+      Array<
+        { __typename?: "ChapterReaction" } & Pick<
+          ChapterReaction,
+          "authorId" | "value"
+        >
+      >
+    >;
+  };
+
 export type CurrentUserFragFragment = { __typename?: "User" } & Pick<
   User,
   "id" | "username"
@@ -357,10 +381,7 @@ export type CreateChapterMutationVariables = Exact<{
 }>;
 
 export type CreateChapterMutation = { __typename?: "Mutation" } & {
-  createChapter: { __typename?: "Chapter" } & Pick<
-    Chapter,
-    "id" | "title" | "text" | "description"
-  >;
+  createChapter: { __typename?: "Chapter" } & ChapterFragment;
 };
 
 export type DeleteChapterMutationVariables = Exact<{
@@ -387,6 +408,18 @@ export type LogoutMutation = { __typename?: "Mutation" } & Pick<
   "logout"
 >;
 
+export type ReactToChapterMutationVariables = Exact<{
+  value: Scalars["Float"];
+  id: Scalars["String"];
+}>;
+
+export type ReactToChapterMutation = { __typename?: "Mutation" } & {
+  reactToChapter: { __typename?: "ChapterReactionResponse" } & Pick<
+    ChapterReactionResponse,
+    "hasVoted"
+  > & { chapter: { __typename?: "Chapter" } & ChapterFragment };
+};
+
 export type RegisterMutationVariables = Exact<{
   name: Scalars["String"];
   email: Scalars["String"];
@@ -403,12 +436,26 @@ export type UpdateChapterMutationVariables = Exact<{
 }>;
 
 export type UpdateChapterMutation = { __typename?: "Mutation" } & {
-  updateChapter: { __typename?: "Chapter" } & Pick<
-    Chapter,
-    "id" | "authorId" | "title" | "text" | "description"
-  >;
+  updateChapter: { __typename?: "Chapter" } & ChapterFragment;
 };
 
+export const ChapterFragmentDoc = gql`
+  fragment Chapter on Chapter {
+    __typename
+    id
+    authorId
+    title
+    text
+    description
+    likes
+    dislikes
+    createdAt
+    reactions {
+      authorId
+      value
+    }
+  }
+`;
 export const CurrentUserFragFragmentDoc = gql`
   fragment CurrentUserFrag on User {
     id
@@ -418,12 +465,10 @@ export const CurrentUserFragFragmentDoc = gql`
 export const CreateChapterDocument = gql`
   mutation CreateChapter($chapterData: InputCreateChapter!) {
     createChapter(chapterData: $chapterData) {
-      id
-      title
-      text
-      description
+      ...Chapter
     }
   }
+  ${ChapterFragmentDoc}
 `;
 export type CreateChapterMutationFn = Apollo.MutationFunction<
   CreateChapterMutation,
@@ -610,6 +655,61 @@ export type LogoutMutationOptions = Apollo.BaseMutationOptions<
   LogoutMutation,
   LogoutMutationVariables
 >;
+export const ReactToChapterDocument = gql`
+  mutation ReactToChapter($value: Float!, $id: String!) {
+    reactToChapter(value: $value, id: $id) {
+      chapter {
+        ...Chapter
+      }
+      hasVoted
+    }
+  }
+  ${ChapterFragmentDoc}
+`;
+export type ReactToChapterMutationFn = Apollo.MutationFunction<
+  ReactToChapterMutation,
+  ReactToChapterMutationVariables
+>;
+
+/**
+ * __useReactToChapterMutation__
+ *
+ * To run a mutation, you first call `useReactToChapterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useReactToChapterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [reactToChapterMutation, { data, loading, error }] = useReactToChapterMutation({
+ *   variables: {
+ *      value: // value for 'value'
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useReactToChapterMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ReactToChapterMutation,
+    ReactToChapterMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    ReactToChapterMutation,
+    ReactToChapterMutationVariables
+  >(ReactToChapterDocument, options);
+}
+export type ReactToChapterMutationHookResult = ReturnType<
+  typeof useReactToChapterMutation
+>;
+export type ReactToChapterMutationResult =
+  Apollo.MutationResult<ReactToChapterMutation>;
+export type ReactToChapterMutationOptions = Apollo.BaseMutationOptions<
+  ReactToChapterMutation,
+  ReactToChapterMutationVariables
+>;
 export const RegisterDocument = gql`
   mutation Register(
     $name: String!
@@ -676,13 +776,10 @@ export type RegisterMutationOptions = Apollo.BaseMutationOptions<
 export const UpdateChapterDocument = gql`
   mutation UpdateChapter($chapterData: InputUpdateChapter!) {
     updateChapter(chapterData: $chapterData) {
-      id
-      authorId
-      title
-      text
-      description
+      ...Chapter
     }
   }
+  ${ChapterFragmentDoc}
 `;
 export type UpdateChapterMutationFn = Apollo.MutationFunction<
   UpdateChapterMutation,

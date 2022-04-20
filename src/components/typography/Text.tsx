@@ -1,8 +1,8 @@
 import React from "react";
 import styled, { css } from "styled-components";
-import { color, ColorProps } from "styled-system";
+import { color, ColorProps, typography, TypographyProps } from "styled-system";
 
-export interface TextProps extends ColorProps {
+export interface TextProps extends ColorProps, TypographyProps {
   children: React.ReactNode;
   size?: "large" | "regular" | "small";
 }
@@ -30,9 +30,15 @@ const Comp = styled.p<TextProps>`
       line-height: 24px;
     `;
   }}
+  ${typography}
 `;
 
-export const Text = ({ children, color, size: type = "regular", ...props }: TextProps) => {
+export const Text = ({
+  children,
+  color,
+  size: type = "regular",
+  ...props
+}: TextProps) => {
   return (
     <Comp {...props} color={color as any} size={type}>
       {children}

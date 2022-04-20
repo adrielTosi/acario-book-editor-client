@@ -1,0 +1,8 @@
+mutation ReactToChapter($value: Float!, $id: String!) {
+  reactToChapter(value: $value, id: $id) {
+    chapter {
+      ...Chapter
+    }
+    hasVoted
+  }
+}

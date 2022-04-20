@@ -327,6 +327,9 @@ export type User = {
   email: Scalars["String"];
   username: Scalars["String"];
   password: Scalars["String"];
+  avatarType: Scalars["String"];
+  avatarSeed: Scalars["String"];
+  bio: Scalars["String"];
   numberOfFollowing: Scalars["Float"];
   numberOfFollowers: Scalars["Float"];
   _count: _Count;
@@ -346,6 +349,27 @@ export type _Count = {
   chapters: Scalars["Float"];
 };
 
+export type ChapterFragment = { __typename: "Chapter" } & Pick<
+  Chapter,
+  | "id"
+  | "authorId"
+  | "title"
+  | "text"
+  | "description"
+  | "likes"
+  | "dislikes"
+  | "createdAt"
+> & {
+    reactions?: Maybe<
+      Array<
+        { __typename?: "ChapterReaction" } & Pick<
+          ChapterReaction,
+          "authorId" | "value"
+        >
+      >
+    >;
+  };
+
 export type CurrentUserFragFragment = { __typename?: "User" } & Pick<
   User,
   "id" | "username"
@@ -362,10 +386,7 @@ export type GetChapterQueryVariables = Exact<{
 }>;
 
 export type GetChapterQuery = { __typename?: "Query" } & {
-  getChapter: { __typename?: "Chapter" } & Pick<
-    Chapter,
-    "id" | "authorId" | "title" | "text" | "description"
-  >;
+  getChapter: { __typename?: "Chapter" } & ChapterFragment;
 };
 
 export type GetChaptersFromUserQueryVariables = Exact<{
@@ -373,12 +394,7 @@ export type GetChaptersFromUserQueryVariables = Exact<{
 }>;
 
 export type GetChaptersFromUserQuery = { __typename?: "Query" } & {
-  getChaptersFromUser: Array<
-    { __typename?: "Chapter" } & Pick<
-      Chapter,
-      "id" | "title" | "text" | "description" | "createdAt" | "updatedAt"
-    >
-  >;
+  getChaptersFromUser: Array<{ __typename?: "Chapter" } & ChapterFragment>;
 };
 
 export type GetUserQueryVariables = Exact<{
@@ -386,32 +402,39 @@ export type GetUserQueryVariables = Exact<{
 }>;
 
 export type GetUserQuery = { __typename?: "Query" } & {
-  getUser: { __typename?: "User" } & Pick<User, "id" | "name" | "username"> & {
-      chapters: Array<
-        { __typename?: "Chapter" } & Pick<
-          Chapter,
-          "id" | "title" | "likes" | "dislikes"
-        > & {
-            tags?: Maybe<
-              Array<{ __typename?: "Tag" } & Pick<Tag, "label" | "value">>
-            >;
-          }
-      >;
-      books: Array<
-        { __typename?: "Book" } & Pick<
-          Book,
-          "id" | "title" | "description" | "likes" | "dislikes"
-        >
-      >;
-      following: Array<
-        { __typename?: "Follow" } & Pick<Follow, "leaderId" | "followId">
-      >;
-      followers: Array<
-        { __typename?: "Follow" } & Pick<Follow, "leaderId" | "followId">
-      >;
+  getUser: { __typename?: "User" } & Pick<
+    User,
+    | "id"
+    | "name"
+    | "username"
+    | "avatarType"
+    | "avatarSeed"
+    | "bio"
+    | "numberOfFollowing"
+    | "numberOfFollowers"
+  > & {
+      _count: { __typename?: "_Count" } & Pick<_Count, "chapters">;
+      chapters: Array<{ __typename?: "Chapter" } & ChapterFragment>;
     };
 };
 
+export const ChapterFragmentDoc = gql`
+  fragment Chapter on Chapter {
+    __typename
+    id
+    authorId
+    title
+    text
+    description
+    likes
+    dislikes
+    createdAt
+    reactions {
+      authorId
+      value
+    }
+  }
+`;
 export const CurrentUserFragFragmentDoc = gql`
   fragment CurrentUserFrag on User {
     id
@@ -433,13 +456,10 @@ export type CurrentUserQueryResult = Apollo.QueryResult<
 export const GetChapterDocument = gql`
   query GetChapter($chapterId: String!) {
     getChapter(chapterId: $chapterId) {
-      id
-      authorId
-      title
-      text
-      description
+      ...Chapter
     }
   }
+  ${ChapterFragmentDoc}
 `;
 export type GetChapterQueryResult = Apollo.QueryResult<
   GetChapterQuery,
@@ -448,14 +468,10 @@ export type GetChapterQueryResult = Apollo.QueryResult<
 export const GetChaptersFromUserDocument = gql`
   query getChaptersFromUser($username: String!) {
     getChaptersFromUser(username: $username) {
-      id
-      title
-      text
-      description
-      createdAt
-      updatedAt
+      ...Chapter
     }
   }
+  ${ChapterFragmentDoc}
 `;
 export type GetChaptersFromUserQueryResult = Apollo.QueryResult<
   GetChaptersFromUserQuery,
@@ -467,33 +483,20 @@ export const GetUserDocument = gql`
       id
       name
       username
+      avatarType
+      avatarSeed
+      bio
+      numberOfFollowing
+      numberOfFollowers
+      _count {
+        chapters
+      }
       chapters {
-        id
-        title
-        likes
-        dislikes
-        tags {
-          label
-          value
-        }
-      }
-      books {
-        id
-        title
-        description
-        likes
-        dislikes
-      }
-      following {
-        leaderId
-        followId
-      }
-      followers {
-        leaderId
-        followId
+        ...Chapter
       }
     }
   }
+  ${ChapterFragmentDoc}
 `;
 export type GetUserQueryResult = Apollo.QueryResult<
   GetUserQuery,

@@ -1,9 +1,5 @@
 query GetChapter($chapterId: String!) {
   getChapter(chapterId: $chapterId) {
-    id
-    authorId
-    title
-    text
-    description 
+    ...Chapter
   }
 }
