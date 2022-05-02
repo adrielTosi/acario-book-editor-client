@@ -1,0 +1,16 @@
+mutation CreateComment($data: InputCreateComment!) {
+  createComment(data: $data) {
+    id
+    text
+    author {
+      id
+      name
+      username
+      avatarType
+      avatarSeed
+    }
+    chapterId
+    createdAt
+    updatedAt
+  }
+}

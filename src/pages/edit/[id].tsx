@@ -40,7 +40,9 @@ const Edit: NextPage<EditProps> = ({ error, data }) => {
     const editor = useTipTap({ content: data.getChapter.text });
     const isOwner = user?.currentUser.id === data.getChapter.authorId;
 
-    if (!isOwner && IS_CLIENT_SIDE) {
+    console.log(user?.currentUser.id, data.getChapter.authorId);
+
+    if (!isOwner && user && IS_CLIENT_SIDE) {
       toast("You tried editing a story from someone else.", {
         toastId: "error-on-edit-story-not-owner",
       });

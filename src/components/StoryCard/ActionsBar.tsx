@@ -1,17 +1,18 @@
-import styled from "styled-components";
-import { TiThumbsUp } from "@react-icons/all-files/ti/TiThumbsUp";
-import { TiThumbsDown } from "@react-icons/all-files/ti/TiThumbsDown";
+import { ApolloCache, gql, useApolloClient } from "@apollo/client";
 import { IconContext } from "@react-icons/all-files";
-import theme from "styles/theme";
-import { StoryCardProps } from "./StoryCard";
+import { BiCommentAdd } from "@react-icons/all-files/bi/BiCommentAdd";
+import { TiThumbsDown } from "@react-icons/all-files/ti/TiThumbsDown";
+import { TiThumbsUp } from "@react-icons/all-files/ti/TiThumbsUp";
 import {
   ReactToChapterMutation,
   useReactToChapterMutation,
 } from "graphql/generated/mutations";
 import { useCurrentUser } from "graphql/generated/page";
-import { ApolloCache, gql, useApolloClient } from "@apollo/client";
-import { toast } from "react-toastify";
 import { useMemo } from "react";
+import { toast } from "react-toastify";
+import styled, { css } from "styled-components";
+import theme from "styles/theme";
+import { StoryCardProps } from "./StoryCard";
 
 const updateCache = (
   cache: ApolloCache<ReactToChapterMutation>,
@@ -20,35 +21,40 @@ const updateCache = (
   dislikes?: number,
   reactions?: any // too complicated
 ) => {
-  cache.writeFragment({
+  cache.modify({
     id: "Chapter:" + id,
-    fragment: gql`
-      fragment UpdatedChapter on Chapter {
-        likes
-        dislikes
-        reactions
-      }
-    `,
-    data: {
-      likes: likes,
-      dislikes: dislikes,
-      reactions: reactions,
+    fields: {
+      likes() {
+        return likes;
+      },
+      dislikes() {
+        return dislikes;
+      },
+      reactions() {
+        return reactions;
+      },
     },
   });
 };
 
-export const ActionsBar = (props: StoryCardProps) => {
+type ActionsBarProps = {
+  props: StoryCardProps;
+  onCommentClick?: () => void;
+};
+
+export const ActionsBar = ({ props, onCommentClick }: ActionsBarProps) => {
   const [reactToChapter] = useReactToChapterMutation();
   const currentUser = useCurrentUser();
   const client = useApolloClient();
 
+  // Read data from Apollo cache
   const data = client.readFragment<{
     id: string;
     likes: number;
     dislikes: number;
     reactions: { authorId: string; value: number }[];
   }>({
-    id: "Chapter:" + props.id,
+    id: "Chapter:" + props?.id,
     fragment: gql`
       fragment __ on Chapter {
         id
@@ -126,9 +132,14 @@ export const ActionsBar = (props: StoryCardProps) => {
   return (
     <IconContext.Provider value={{ size: "24px" }}>
       <Wrapper>
-        <div>dislikes: {data?.dislikes}--</div>
-        <div>likes: {data?.likes}</div>
+        <AButton onClick={onCommentClick}>
+          <BiCommentAdd style={{ color: theme.colors.contrast_med }} />
+        </AButton>
+
         <AButton onClick={handleDownvote}>
+          {userVote.value === -1 && (
+            <LikeNumber value={-1}>{data?.dislikes}</LikeNumber>
+          )}
           <TiThumbsDown
             style={{
               color: handleColor(userVote.hasVoted && userVote.value === -1),
@@ -136,6 +147,10 @@ export const ActionsBar = (props: StoryCardProps) => {
           />
         </AButton>
         <AButton onClick={handleUpvote}>
+          {userVote.value === 1 && (
+            <LikeNumber value={1}>{data?.likes}</LikeNumber>
+          )}
+          {data?.likes}
           <TiThumbsUp
             style={{
               color: handleColor(userVote.hasVoted && userVote.value === 1),
@@ -153,8 +168,9 @@ const Wrapper = styled.div`
   margin-top: 8px;
 `;
 
-const AButton = styled.button`
+const AButtonStyles = css`
   background-color: transparent;
+  position: relative;
   cursor: pointer;
   border: none;
   width: 36px;
@@ -163,4 +179,26 @@ const AButton = styled.button`
   &:hover {
     background-color: ${(props) => props.theme.colors.accent_2_bg_light};
   }
+`;
+const AButton = styled.button`
+  ${AButtonStyles}
+`;
+
+const LikeNumber = styled.div<{ value: number }>`
+  position: absolute;
+  height: 100%;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background: ${(props) =>
+    `linear-gradient(0deg, ${props.theme.colors.bg_primary} 0%, rgba(255,255,255,0) 100%)`};
+
+  color: ${(props) => {
+    if (props.value === -1) {
+      return props.theme.colors.accent_2_500;
+    }
+    return props.theme.colors.accent_1_500;
+  }};
 `;

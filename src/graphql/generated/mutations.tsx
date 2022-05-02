@@ -339,7 +339,7 @@ export type User = {
   tags: Array<Tag>;
   following: Array<Follow>;
   followers: Array<Follow>;
-  comments: Array<Comment>;
+  comments?: Maybe<Array<Comment>>;
   bookReactions: Array<BookReaction>;
   chapterReactions: Array<ChapterReaction>;
   createdAt: Scalars["String"];
@@ -369,6 +369,17 @@ export type ChapterFragment = { __typename: "Chapter" } & Pick<
         >
       >
     >;
+    comments?: Maybe<Array<{ __typename?: "Comment" } & CommentFragment>>;
+  };
+
+export type CommentFragment = { __typename: "Comment" } & Pick<
+  Comment,
+  "id" | "text" | "chapterId" | "createdAt" | "updatedAt"
+> & {
+    author: { __typename?: "User" } & Pick<
+      User,
+      "id" | "username" | "name" | "avatarType" | "avatarSeed"
+    >;
   };
 
 export type CurrentUserFragFragment = { __typename?: "User" } & Pick<
@@ -382,6 +393,22 @@ export type CreateChapterMutationVariables = Exact<{
 
 export type CreateChapterMutation = { __typename?: "Mutation" } & {
   createChapter: { __typename?: "Chapter" } & ChapterFragment;
+};
+
+export type CreateCommentMutationVariables = Exact<{
+  data: InputCreateComment;
+}>;
+
+export type CreateCommentMutation = { __typename?: "Mutation" } & {
+  createComment: { __typename?: "Comment" } & Pick<
+    Comment,
+    "id" | "text" | "chapterId" | "createdAt" | "updatedAt"
+  > & {
+      author: { __typename?: "User" } & Pick<
+        User,
+        "id" | "name" | "username" | "avatarType" | "avatarSeed"
+      >;
+    };
 };
 
 export type DeleteChapterMutationVariables = Exact<{
@@ -439,6 +466,23 @@ export type UpdateChapterMutation = { __typename?: "Mutation" } & {
   updateChapter: { __typename?: "Chapter" } & ChapterFragment;
 };
 
+export const CommentFragmentDoc = gql`
+  fragment Comment on Comment {
+    __typename
+    id
+    text
+    author {
+      id
+      username
+      name
+      avatarType
+      avatarSeed
+    }
+    chapterId
+    createdAt
+    updatedAt
+  }
+`;
 export const ChapterFragmentDoc = gql`
   fragment Chapter on Chapter {
     __typename
@@ -454,7 +498,11 @@ export const ChapterFragmentDoc = gql`
       authorId
       value
     }
+    comments {
+      ...Comment
+    }
   }
+  ${CommentFragmentDoc}
 `;
 export const CurrentUserFragFragmentDoc = gql`
   fragment CurrentUserFrag on User {
@@ -512,6 +560,67 @@ export type CreateChapterMutationResult =
 export type CreateChapterMutationOptions = Apollo.BaseMutationOptions<
   CreateChapterMutation,
   CreateChapterMutationVariables
+>;
+export const CreateCommentDocument = gql`
+  mutation CreateComment($data: InputCreateComment!) {
+    createComment(data: $data) {
+      id
+      text
+      author {
+        id
+        name
+        username
+        avatarType
+        avatarSeed
+      }
+      chapterId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export type CreateCommentMutationFn = Apollo.MutationFunction<
+  CreateCommentMutation,
+  CreateCommentMutationVariables
+>;
+
+/**
+ * __useCreateCommentMutation__
+ *
+ * To run a mutation, you first call `useCreateCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createCommentMutation, { data, loading, error }] = useCreateCommentMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useCreateCommentMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateCommentMutation,
+    CreateCommentMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    CreateCommentMutation,
+    CreateCommentMutationVariables
+  >(CreateCommentDocument, options);
+}
+export type CreateCommentMutationHookResult = ReturnType<
+  typeof useCreateCommentMutation
+>;
+export type CreateCommentMutationResult =
+  Apollo.MutationResult<CreateCommentMutation>;
+export type CreateCommentMutationOptions = Apollo.BaseMutationOptions<
+  CreateCommentMutation,
+  CreateCommentMutationVariables
 >;
 export const DeleteChapterDocument = gql`
   mutation DeleteChapter($chapterId: String!) {
