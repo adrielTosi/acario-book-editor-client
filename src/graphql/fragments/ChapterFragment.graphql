@@ -12,4 +12,7 @@ fragment Chapter on Chapter {
     authorId
     value
   }
+  comments {
+    ...Comment
+  }
 }

@@ -1,4 +1,5 @@
 import { ChapterFragment, GetUserQuery } from "graphql/generated/graphqlTypes";
+import router from "next/router";
 import styled from "styled-components";
 import theme from "styles/theme";
 import { H4, H4Link } from "../typography/Heading";
@@ -41,7 +42,12 @@ export const StoryCard = (props: StoryCardProps) => {
 
         <Details>Details</Details>
       </DescriptionWrapper>
-      <ActionsBar {...props} />
+      <ActionsBar
+        props={{ ...props }}
+        onCommentClick={() =>
+          router.push({ pathname: `/story/${props.id}`, hash: "comments" })
+        }
+      />
     </Wrapper>
   );
 };

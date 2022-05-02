@@ -12,7 +12,6 @@ type HomeProps = ServerSideProps<GetUserQuery>;
 
 const Dasboard: NextPage<HomeProps> = (props) => {
   usePrivateRoute();
-  console.log(JSON.stringify(props.data, undefined, 2));
   if (props.error) {
     return <div className="has-text-centered">{props.error}</div>;
   }

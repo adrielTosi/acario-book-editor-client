@@ -338,7 +338,7 @@ export type User = {
   tags: Array<Tag>;
   following: Array<Follow>;
   followers: Array<Follow>;
-  comments: Array<Comment>;
+  comments?: Maybe<Array<Comment>>;
   bookReactions: Array<BookReaction>;
   chapterReactions: Array<ChapterReaction>;
   createdAt: Scalars["String"];
@@ -367,6 +367,17 @@ export type ChapterFragment = { __typename: "Chapter" } & Pick<
           "authorId" | "value"
         >
       >
+    >;
+    comments?: Maybe<Array<{ __typename?: "Comment" } & CommentFragment>>;
+  };
+
+export type CommentFragment = { __typename: "Comment" } & Pick<
+  Comment,
+  "id" | "text" | "chapterId" | "createdAt" | "updatedAt"
+> & {
+    author: { __typename?: "User" } & Pick<
+      User,
+      "id" | "username" | "name" | "avatarType" | "avatarSeed"
     >;
   };
 
@@ -418,6 +429,23 @@ export type GetUserQuery = { __typename?: "Query" } & {
     };
 };
 
+export const CommentFragmentDoc = gql`
+  fragment Comment on Comment {
+    __typename
+    id
+    text
+    author {
+      id
+      username
+      name
+      avatarType
+      avatarSeed
+    }
+    chapterId
+    createdAt
+    updatedAt
+  }
+`;
 export const ChapterFragmentDoc = gql`
   fragment Chapter on Chapter {
     __typename
@@ -433,7 +461,11 @@ export const ChapterFragmentDoc = gql`
       authorId
       value
     }
+    comments {
+      ...Comment
+    }
   }
+  ${CommentFragmentDoc}
 `;
 export const CurrentUserFragFragmentDoc = gql`
   fragment CurrentUserFrag on User {
