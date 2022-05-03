@@ -132,11 +132,11 @@ export const ActionsBar = ({ props, onCommentClick }: ActionsBarProps) => {
   return (
     <IconContext.Provider value={{ size: "24px" }}>
       <Wrapper>
-        <AButton onClick={onCommentClick}>
+        <ActionButton onClick={onCommentClick}>
           <BiCommentAdd style={{ color: theme.colors.contrast_med }} />
-        </AButton>
+        </ActionButton>
 
-        <AButton onClick={handleDownvote}>
+        <ActionButton onClick={handleDownvote}>
           {userVote.value === -1 && (
             <LikeNumber value={-1}>{data?.dislikes}</LikeNumber>
           )}
@@ -145,8 +145,8 @@ export const ActionsBar = ({ props, onCommentClick }: ActionsBarProps) => {
               color: handleColor(userVote.hasVoted && userVote.value === -1),
             }}
           />
-        </AButton>
-        <AButton onClick={handleUpvote}>
+        </ActionButton>
+        <ActionButton onClick={handleUpvote}>
           {userVote.value === 1 && (
             <LikeNumber value={1}>{data?.likes}</LikeNumber>
           )}
@@ -156,7 +156,7 @@ export const ActionsBar = ({ props, onCommentClick }: ActionsBarProps) => {
               color: handleColor(userVote.hasVoted && userVote.value === 1),
             }}
           />
-        </AButton>
+        </ActionButton>
       </Wrapper>
     </IconContext.Provider>
   );
@@ -168,7 +168,7 @@ const Wrapper = styled.div`
   margin-top: 8px;
 `;
 
-const AButtonStyles = css`
+export const AButtonStyles = css`
   background-color: transparent;
   position: relative;
   cursor: pointer;
@@ -180,7 +180,7 @@ const AButtonStyles = css`
     background-color: ${(props) => props.theme.colors.accent_2_bg_light};
   }
 `;
-const AButton = styled.button`
+export const ActionButton = styled.button`
   ${AButtonStyles}
 `;
 

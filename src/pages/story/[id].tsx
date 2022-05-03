@@ -17,6 +17,8 @@ import {
 import {
   useCreateCommentMutation,
   useDeleteChapterMutation,
+  useDeleteCommentMutation,
+  useEditCommentMutation,
 } from "graphql/generated/mutations";
 import { ssrGetChapter, useCurrentUser } from "graphql/generated/page";
 import { useTipTap } from "lib/hooks/UseTipTap";
@@ -33,7 +35,7 @@ type StoryProps = ServerSideProps<GetChapterQuery>;
 
 const Story: NextPage<StoryProps> = ({ error, data }) => {
   if (error) {
-    toast(error, { toastId: "error-on-edit-story" });
+    toast(error, { toastId: "error-on-view-story" });
     return null;
   } else {
     const client = useApolloClient();
@@ -43,8 +45,12 @@ const Story: NextPage<StoryProps> = ({ error, data }) => {
     const { data: user } = useCurrentUser();
     const [deleteChapter] = useDeleteChapterMutation();
     const [comment] = useCreateCommentMutation();
+    const [deleteComment] = useDeleteCommentMutation();
+    const [editComment] = useEditCommentMutation();
+
     const [commentInput, setComment] = useState("");
     const [isCommenting, toggleCommenting] = useState(false);
+    const [isEditing, toggleEditing] = useState(false);
     const isOwner = user?.currentUser.id === data.getChapter.authorId;
 
     // LIVE CACHEDD COMMENTS DATA
@@ -138,6 +144,52 @@ const Story: NextPage<StoryProps> = ({ error, data }) => {
       }
     };
 
+    const handleDeleteComment = async (id: string) => {
+      try {
+        const sure = confirm("Are you sure?");
+        if (sure) {
+          await deleteComment({
+            variables: { id },
+            update(cache) {
+              const normalizedId = cache.identify({
+                id,
+                __typename: "Comment",
+              });
+              cache.evict({ id: normalizedId });
+              cache.gc();
+            },
+          });
+        }
+      } catch (err: any) {
+        toast(err.message, {
+          toastId: data.getChapter.dislikes,
+        });
+      }
+    };
+
+    const handleEditComment = async (id: string, text: string) => {
+      try {
+        await editComment({
+          variables: { id, text },
+          update(cache) {
+            cache.modify({
+              id: "Comment:" + id,
+              fields: {
+                text() {
+                  return text;
+                },
+              },
+            });
+          },
+        });
+        toggleEditing(false);
+      } catch (err: any) {
+        toast(err.message, {
+          toastId: id,
+        });
+      }
+    };
+
     return (
       <Box className="container is-max-desktop" padding="0 8px">
         {/* OWNER ACTIONS */}
@@ -211,7 +263,14 @@ const Story: NextPage<StoryProps> = ({ error, data }) => {
         <Box mt="1em" id="comments">
           {commentsData?.comments?.map((comment) => (
             <Box mb="1em" key={comment.id}>
-              <Comment {...comment} />
+              <Comment
+                data={{ ...comment }}
+                owner={user?.currentUser.id}
+                handleDelete={handleDeleteComment}
+                toggleEditing={() => toggleEditing((prev) => !prev)}
+                isEditing={isEditing}
+                handleEdit={handleEditComment}
+              />
             </Box>
           ))}
         </Box>

@@ -172,7 +172,7 @@ export type Mutation = {
   unfollowUser: Scalars["Boolean"];
   createComment: Comment;
   updateComment: Comment;
-  deleteComment: Scalars["Boolean"];
+  deleteComment: Comment;
   reactToBook: BookReactionResponse;
   reactToChapter: ChapterReactionResponse;
 };
