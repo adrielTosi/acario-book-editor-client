@@ -1,30 +1,39 @@
-import React from "react";
-import Link from "next/link";
-import { StoryCard } from "components/StoryCard/StoryCard";
 import { withApollo } from "apollo/withApollo";
-import { GetServerSideProps, NextPage } from "next";
-import { ssrCurrentUser, ssrGetUser } from "graphql/generated/page";
+import { Sidebar } from "components/Sidebar";
+import { StoryCard } from "components/StoryCard/StoryCard";
+import { Box } from "components/ui/Box";
 import { GetUserQuery } from "graphql/generated/graphqlTypes";
-import { ServerSideProps } from "types/ServerSideProps";
+import { ssrCurrentUser, ssrGetUser } from "graphql/generated/page";
 import { usePrivateRoute } from "lib/auth";
+import { GetServerSideProps, NextPage } from "next";
+import React from "react";
+import { ServerSideProps } from "types/ServerSideProps";
 
 type HomeProps = ServerSideProps<GetUserQuery>;
 
 const Dasboard: NextPage<HomeProps> = (props) => {
+  console.log(props);
   usePrivateRoute();
   if (props.error) {
     return <div className="has-text-centered">{props.error}</div>;
   }
   return (
-    <div className="container">
-      <div className="columns is-multiline is-full-height">
-        {props.data.getUser.chapters.map((chapter) => (
-          <div className="column is-3" key={chapter.id}>
-            <StoryCard {...chapter} />
+    <Box className="container" position="relative">
+      <div className="columns">
+        <Box className="column is-4-tablet is-3-desktop" pb="0">
+          <Sidebar />
+        </Box>
+        <Box className="column is-8-tablet is-9-desktop" display="inline-block">
+          <div className="columns is-multiline is-full-height">
+            {props.data.getUser.chapters.map((chapter) => (
+              <div className="column is-6-tablet is-4-desktop" key={chapter.id}>
+                <StoryCard {...chapter} />
+              </div>
+            ))}
           </div>
-        ))}
+        </Box>
       </div>
-    </div>
+    </Box>
   );
 };
 
@@ -32,7 +41,7 @@ export default withApollo(Dasboard);
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
-    // IS THIS CALL NECESSARY? PROBABLY NOT
+    // IS THIS CALL NECESSARY? PROBABLY NOT -- maybe better make an optional id search in the backend
     const user = await ssrCurrentUser.getServerPage(
       {
         notifyOnNetworkStatusChange: true,
