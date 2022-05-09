@@ -1,8 +1,10 @@
-import { ChapterFragment, GetUserQuery } from "graphql/generated/graphqlTypes";
+import { UserMedia } from "components/Profile/UserMedia";
+import { ChapterFragment } from "graphql/generated/graphqlTypes";
+import { useAvatar } from "lib/hooks/useAvatar";
 import router from "next/router";
 import styled from "styled-components";
 import theme from "styles/theme";
-import { H4, H4Link } from "../typography/Heading";
+import { H4Link } from "../typography/Heading";
 import { Text } from "../typography/Text";
 import { Box } from "../ui/Box";
 import { ActionsBar } from "./ActionsBar";
@@ -13,6 +15,11 @@ export const StoryCard = (props: StoryCardProps) => {
   const publishedDate = new Date(
     parseInt(props.createdAt)
   ).toLocaleDateString();
+
+  const avatar = useAvatar({
+    seed: props.author.avatarSeed,
+    type: props.author.avatarType,
+  });
   return (
     <Wrapper>
       <TitleWrapper>
@@ -40,7 +47,14 @@ export const StoryCard = (props: StoryCardProps) => {
           </Box>
         </Description>
 
-        <Details>Details</Details>
+        <Details>
+          <UserMedia
+            avatar={avatar}
+            name={props.author.name}
+            username={props.author.username}
+            size="small"
+          />
+        </Details>
       </DescriptionWrapper>
       <ActionsBar
         props={{ ...props }}

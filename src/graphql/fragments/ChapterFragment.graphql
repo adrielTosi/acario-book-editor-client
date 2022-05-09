@@ -8,6 +8,13 @@ fragment Chapter on Chapter {
   likes
   dislikes
   createdAt
+  author {
+    id
+    name
+    username
+    avatarType
+    avatarSeed
+  }
   reactions {
     authorId
     value

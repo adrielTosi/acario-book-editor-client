@@ -1,5 +1,5 @@
 import { withApollo } from "apollo/withApollo";
-import { Sidebar } from "components/Sidebar";
+import { WithSidebar } from "components/Sidebar";
 import { StoryCard } from "components/StoryCard/StoryCard";
 import { Box } from "components/ui/Box";
 import { GetUserQuery } from "graphql/generated/graphqlTypes";
@@ -12,27 +12,21 @@ import { ServerSideProps } from "types/ServerSideProps";
 type HomeProps = ServerSideProps<GetUserQuery>;
 
 const Dasboard: NextPage<HomeProps> = (props) => {
-  console.log(props);
   usePrivateRoute();
   if (props.error) {
     return <div className="has-text-centered">{props.error}</div>;
   }
   return (
     <Box className="container" position="relative">
-      <div className="columns">
-        <Box className="column is-4-tablet is-3-desktop" pb="0">
-          <Sidebar />
-        </Box>
-        <Box className="column is-8-tablet is-9-desktop" display="inline-block">
-          <div className="columns is-multiline is-full-height">
-            {props.data.getUser.chapters.map((chapter) => (
-              <div className="column is-6-tablet is-4-desktop" key={chapter.id}>
-                <StoryCard {...chapter} />
-              </div>
-            ))}
-          </div>
-        </Box>
-      </div>
+      <WithSidebar data={props.data} displayFollow={false}>
+        <div className="columns is-multiline">
+          {props.data.getUser.chapters.map((chapter) => (
+            <div className="column is-6-tablet is-4-desktop" key={chapter.id}>
+              <StoryCard {...chapter} />
+            </div>
+          ))}
+        </div>
+      </WithSidebar>
     </Box>
   );
 };

@@ -5,6 +5,7 @@ import { color, ColorProps, typography, TypographyProps } from "styled-system";
 export interface TextProps extends ColorProps, TypographyProps {
   children: React.ReactNode;
   size?: "large" | "regular" | "small";
+  inline_block?: boolean;
 }
 
 const Comp = styled.p<TextProps>`
@@ -12,6 +13,7 @@ const Comp = styled.p<TextProps>`
   font-family: ${(props) => props.theme.font.body};
   font-style: normal;
   font-weight: normal;
+  ${(props) => (props.inline_block ? "display: inline-block;" : "")}
   ${(props) => {
     if (props.size === "large") {
       return css`

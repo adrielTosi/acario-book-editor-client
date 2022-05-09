@@ -6,10 +6,14 @@ query GetUser($username: String!) {
     avatarType
     avatarSeed
     bio
-    numberOfFollowing
-    numberOfFollowers
+    followers {
+      leaderId
+      followId
+    }
     _count {
       chapters
+      followers
+      following
     }
     chapters {
       ...Chapter
