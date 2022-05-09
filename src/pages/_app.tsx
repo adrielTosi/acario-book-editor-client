@@ -15,7 +15,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <GlobalStyle />
       <Navbar />
       <ToastContainer />
-      <Box>
+      <Box id="main-box" mt="12px">
         <Component {...pageProps} />
       </Box>
     </ThemeProvider>

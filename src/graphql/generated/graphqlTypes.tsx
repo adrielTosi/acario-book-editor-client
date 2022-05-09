@@ -132,10 +132,6 @@ export type InputCreateUser = {
   password: Scalars["String"];
 };
 
-export type InputFollow = {
-  followId: Scalars["String"];
-};
-
 export type InputNewBook = {
   title: Scalars["String"];
   description: Scalars["String"];
@@ -169,7 +165,7 @@ export type Mutation = {
   createTags: Array<Tag>;
   deleteTag: Scalars["Boolean"];
   followUser: Follow;
-  unfollowUser: Scalars["Boolean"];
+  unfollowUser: Follow;
   createComment: Comment;
   updateComment: Comment;
   deleteComment: Comment;
@@ -220,11 +216,11 @@ export type MutationDeleteTagArgs = {
 };
 
 export type MutationFollowUserArgs = {
-  data: InputFollow;
+  id: Scalars["String"];
 };
 
 export type MutationUnfollowUserArgs = {
-  data: InputFollow;
+  id: Scalars["String"];
 };
 
 export type MutationCreateCommentArgs = {
@@ -347,6 +343,8 @@ export type User = {
 export type _Count = {
   __typename?: "_Count";
   chapters: Scalars["Float"];
+  followers: Scalars["Float"];
+  following: Scalars["Float"];
 };
 
 export type ChapterFragment = { __typename: "Chapter" } & Pick<
@@ -360,6 +358,10 @@ export type ChapterFragment = { __typename: "Chapter" } & Pick<
   | "dislikes"
   | "createdAt"
 > & {
+    author: { __typename?: "User" } & Pick<
+      User,
+      "id" | "name" | "username" | "avatarType" | "avatarSeed"
+    >;
     reactions?: Maybe<
       Array<
         { __typename?: "ChapterReaction" } & Pick<
@@ -415,16 +417,15 @@ export type GetUserQueryVariables = Exact<{
 export type GetUserQuery = { __typename?: "Query" } & {
   getUser: { __typename?: "User" } & Pick<
     User,
-    | "id"
-    | "name"
-    | "username"
-    | "avatarType"
-    | "avatarSeed"
-    | "bio"
-    | "numberOfFollowing"
-    | "numberOfFollowers"
+    "id" | "name" | "username" | "avatarType" | "avatarSeed" | "bio"
   > & {
-      _count: { __typename?: "_Count" } & Pick<_Count, "chapters">;
+      followers: Array<
+        { __typename?: "Follow" } & Pick<Follow, "leaderId" | "followId">
+      >;
+      _count: { __typename?: "_Count" } & Pick<
+        _Count,
+        "chapters" | "followers" | "following"
+      >;
       chapters: Array<{ __typename?: "Chapter" } & ChapterFragment>;
     };
 };
@@ -457,6 +458,13 @@ export const ChapterFragmentDoc = gql`
     likes
     dislikes
     createdAt
+    author {
+      id
+      name
+      username
+      avatarType
+      avatarSeed
+    }
     reactions {
       authorId
       value
@@ -518,10 +526,14 @@ export const GetUserDocument = gql`
       avatarType
       avatarSeed
       bio
-      numberOfFollowing
-      numberOfFollowers
+      followers {
+        leaderId
+        followId
+      }
       _count {
         chapters
+        followers
+        following
       }
       chapters {
         ...Chapter

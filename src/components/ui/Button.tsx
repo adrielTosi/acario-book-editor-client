@@ -6,11 +6,13 @@ export interface ButtonProps extends SpaceProps {
   pill?: boolean;
   round?: boolean;
   loading?: boolean;
+  lined?: boolean;
 }
 
 export const Button = styled.button<ButtonProps>`
   border: none;
   border-radius: ${(props) => (props.pill || props.round ? "999px" : "4px")};
+  height: fit-content;
   padding: ${(props) => {
     if (!props.round) {
       return css`8px 24px`;
