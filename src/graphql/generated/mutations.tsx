@@ -327,8 +327,6 @@ export type User = {
   avatarType: Scalars["String"];
   avatarSeed: Scalars["String"];
   bio: Scalars["String"];
-  numberOfFollowing: Scalars["Float"];
-  numberOfFollowers: Scalars["Float"];
   _count: _Count;
   books: Array<Book>;
   chapters: Array<Chapter>;

@@ -47,6 +47,7 @@ export const Sidebar = ({
             p="6px 14px"
             round
             onClick={currentUserAlreadyFollows ? handleUnfollow : handleFollow}
+            variant={currentUserAlreadyFollows ? "secondary" : "primary"}
           >
             {currentUserAlreadyFollows ? "Unfollow" : "Follow"}
           </Button>

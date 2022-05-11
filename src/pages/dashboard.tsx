@@ -2,9 +2,15 @@ import { withApollo } from "apollo/withApollo";
 import { WithSidebar } from "components/Sidebar";
 import { StoryCard } from "components/StoryCard/StoryCard";
 import { Box } from "components/ui/Box";
+import { Button } from "components/ui/Button";
 import { GetUserQuery } from "graphql/generated/graphqlTypes";
-import { ssrCurrentUser, ssrGetUser } from "graphql/generated/page";
+import {
+  ssrCurrentUser,
+  ssrGetUser,
+  useGetTimelineTales,
+} from "graphql/generated/page";
 import { usePrivateRoute } from "lib/auth";
+import { last } from "lodash";
 import { GetServerSideProps, NextPage } from "next";
 import React from "react";
 import { ServerSideProps } from "types/ServerSideProps";
@@ -13,19 +19,39 @@ type HomeProps = ServerSideProps<GetUserQuery>;
 
 const Dasboard: NextPage<HomeProps> = (props) => {
   usePrivateRoute();
+  const { data, loading, error, variables, fetchMore } = useGetTimelineTales(
+    () => ({ variables: { take: 2 } })
+  );
   if (props.error) {
     return <div className="has-text-centered">{props.error}</div>;
   }
+
+  const handleFetchMore = async () => {
+    const chapters = data?.getTimelineChapters.chapters;
+    if (chapters) {
+      const cursor = last(chapters)?.createdAt;
+      await fetchMore({ variables: { take: 2, cursor } });
+    }
+  };
+
   return (
     <Box className="container" position="relative">
       <WithSidebar data={props.data} displayFollow={false}>
-        <div className="columns is-multiline">
-          {props.data.getUser.chapters.map((chapter) => (
-            <div className="column is-6-tablet is-4-desktop" key={chapter.id}>
-              <StoryCard {...chapter} />
-            </div>
-          ))}
-        </div>
+        {loading ? (
+          <Box textAlign="center">Loading . . .</Box>
+        ) : error ? (
+          <Box>{error.message}</Box>
+        ) : (
+          <>
+            {data?.getTimelineChapters.chapters.map((chapter, i) => (
+              <StoryCard {...chapter} format="horizontal" />
+            ))}
+
+            {data?.getTimelineChapters.hasMore && (
+              <Button onClick={handleFetchMore}>More...</Button>
+            )}
+          </>
+        )}
       </WithSidebar>
     </Box>
   );

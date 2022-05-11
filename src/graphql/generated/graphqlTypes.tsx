@@ -326,8 +326,6 @@ export type User = {
   avatarType: Scalars["String"];
   avatarSeed: Scalars["String"];
   bio: Scalars["String"];
-  numberOfFollowing: Scalars["Float"];
-  numberOfFollowers: Scalars["Float"];
   _count: _Count;
   books: Array<Book>;
   chapters: Array<Chapter>;
@@ -408,6 +406,18 @@ export type GetChaptersFromUserQueryVariables = Exact<{
 
 export type GetChaptersFromUserQuery = { __typename?: "Query" } & {
   getChaptersFromUser: Array<{ __typename?: "Chapter" } & ChapterFragment>;
+};
+
+export type GetTimelineTalesQueryVariables = Exact<{
+  cursor?: Maybe<Scalars["String"]>;
+  take: Scalars["Float"];
+}>;
+
+export type GetTimelineTalesQuery = { __typename?: "Query" } & {
+  getTimelineChapters: { __typename?: "PaginatedTimelineChapters" } & Pick<
+    PaginatedTimelineChapters,
+    "hasMore"
+  > & { chapters: Array<{ __typename?: "Chapter" } & ChapterFragment> };
 };
 
 export type GetUserQueryVariables = Exact<{
@@ -516,6 +526,21 @@ export const GetChaptersFromUserDocument = gql`
 export type GetChaptersFromUserQueryResult = Apollo.QueryResult<
   GetChaptersFromUserQuery,
   GetChaptersFromUserQueryVariables
+>;
+export const GetTimelineTalesDocument = gql`
+  query GetTimelineTales($cursor: String, $take: Float!) {
+    getTimelineChapters(cursor: $cursor, take: $take) {
+      chapters {
+        ...Chapter
+      }
+      hasMore
+    }
+  }
+  ${ChapterFragmentDoc}
+`;
+export type GetTimelineTalesQueryResult = Apollo.QueryResult<
+  GetTimelineTalesQuery,
+  GetTimelineTalesQueryVariables
 >;
 export const GetUserDocument = gql`
   query GetUser($username: String!) {
