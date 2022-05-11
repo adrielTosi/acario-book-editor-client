@@ -6,6 +6,7 @@ import {
   ApolloProvider,
   createHttpLink,
 } from "@apollo/client";
+import { PaginatedTimelineChapters } from "graphql/generated/graphqlTypes";
 // import { isServerSide } from "./utils/isServerSide";
 
 export const withApollo = (Comp: NextPage<any>) => (props: any) => {
@@ -16,15 +17,40 @@ export const withApollo = (Comp: NextPage<any>) => (props: any) => {
   );
 };
 
-export const getApolloClient = (_?: any, initialState?: NormalizedCacheObject) => {
+export const getApolloClient = (
+  _?: any,
+  initialState?: NormalizedCacheObject
+) => {
   return new ApolloClient({
     ssrMode: process.env.NODE_ENV === "production",
     link: createHttpLink({
       uri: "http://localhost:4000/graphql",
       credentials: "include",
     }),
-    cache: new InMemoryCache().restore(initialState || {}),
+    cache: new InMemoryCache({
+      typePolicies: {
+        Query: {
+          fields: {
+            getTimelineChapters: {
+              keyArgs: false,
+              merge(
+                existing: PaginatedTimelineChapters | undefined,
+                incoming: PaginatedTimelineChapters
+              ): PaginatedTimelineChapters {
+                return {
+                  ...incoming,
+                  chapters: [
+                    ...(existing?.chapters || []),
+                    ...incoming.chapters,
+                  ],
+                };
+              },
+            },
+          },
+        },
+      },
+    }).restore(initialState || {}),
   });
 };
 
-export type TApolloClient = ReturnType<typeof getApolloClient>
+export type TApolloClient = ReturnType<typeof getApolloClient>;

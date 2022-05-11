@@ -1,0 +1,8 @@
+query GetTimelineTales($cursor: String, $take: Float!) {
+  getTimelineChapters(cursor: $cursor, take: $take) {
+    chapters {
+      ...Chapter
+    }
+    hasMore
+  }
+}

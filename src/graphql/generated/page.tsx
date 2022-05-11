@@ -178,6 +178,70 @@ export const ssrGetChaptersFromUser = {
   withPage: withPageGetChaptersFromUser,
   usePage: useGetChaptersFromUser,
 };
+export async function getServerPageGetTimelineTales(
+  options: Omit<
+    Apollo.QueryOptions<Types.GetTimelineTalesQueryVariables>,
+    "query"
+  >,
+  ctx?: any
+) {
+  const apolloClient = getApolloClient(ctx);
+
+  const data = await apolloClient.query<Types.GetTimelineTalesQuery>({
+    ...options,
+    query: Operations.GetTimelineTalesDocument,
+  });
+
+  const apolloState = apolloClient.cache.extract();
+
+  return {
+    props: {
+      apolloState: apolloState,
+      data: data?.data,
+      error: data?.error ?? data?.errors ?? null,
+    },
+  };
+}
+export const useGetTimelineTales = (
+  optionsFunc?: (
+    router: NextRouter
+  ) => QueryHookOptions<
+    Types.GetTimelineTalesQuery,
+    Types.GetTimelineTalesQueryVariables
+  >
+) => {
+  const router = useRouter();
+  const options = optionsFunc ? optionsFunc(router) : {};
+  return useQuery(Operations.GetTimelineTalesDocument, options);
+};
+export type PageGetTimelineTalesComp = React.FC<{
+  data?: Types.GetTimelineTalesQuery;
+  error?: Apollo.ApolloError;
+}>;
+export const withPageGetTimelineTales =
+  (
+    optionsFunc?: (
+      router: NextRouter
+    ) => QueryHookOptions<
+      Types.GetTimelineTalesQuery,
+      Types.GetTimelineTalesQueryVariables
+    >
+  ) =>
+  (WrappedComponent: PageGetTimelineTalesComp): NextPage =>
+  (props) => {
+    const router = useRouter();
+    const options = optionsFunc ? optionsFunc(router) : {};
+    const { data, error } = useQuery(
+      Operations.GetTimelineTalesDocument,
+      options
+    );
+    return <WrappedComponent {...props} data={data} error={error} />;
+  };
+export const ssrGetTimelineTales = {
+  getServerPage: getServerPageGetTimelineTales,
+  withPage: withPageGetTimelineTales,
+  usePage: useGetTimelineTales,
+};
 export async function getServerPageGetUser(
   options: Omit<Apollo.QueryOptions<Types.GetUserQueryVariables>, "query">,
   ctx?: any

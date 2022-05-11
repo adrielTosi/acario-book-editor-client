@@ -103,7 +103,7 @@ const Username: NextPage<UserProps> = (props) => {
         <div className="columns is-multiline">
           {props.data.getUser.chapters.map((chapter) => (
             <div className="column is-6-tablet is-4-desktop" key={chapter.id}>
-              <StoryCard {...chapter} />
+              <StoryCard {...chapter} format="vertical" />
             </div>
           ))}
         </div>

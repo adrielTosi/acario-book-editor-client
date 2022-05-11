@@ -50,4 +50,5 @@ const Username = styled(Text)`
 const Wrapper = styled.div`
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
 `;

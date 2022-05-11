@@ -150,7 +150,6 @@ export const ActionsBar = ({ props, onCommentClick }: ActionsBarProps) => {
           {userVote.value === 1 && (
             <LikeNumber value={1}>{data?.likes}</LikeNumber>
           )}
-          {data?.likes}
           <TiThumbsUp
             style={{
               color: handleColor(userVote.hasVoted && userVote.value === 1),
@@ -165,7 +164,6 @@ export const ActionsBar = ({ props, onCommentClick }: ActionsBarProps) => {
 const Wrapper = styled.div`
   display: flex;
   justify-content: flex-end;
-  margin-top: 8px;
 `;
 
 export const AButtonStyles = css`
