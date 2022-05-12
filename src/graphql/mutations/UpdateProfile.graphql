@@ -1,0 +1,22 @@
+mutation UpdateProfile($data: InputUpdateProfile!) {
+  updateProfile(data: $data) {
+    id
+    name
+    username
+    avatarType
+    avatarSeed
+    bio
+    followers {
+      leaderId
+      followId
+    }
+    _count {
+      chapters
+      followers
+      following
+    }
+    chapters {
+      ...Chapter
+    }
+  }
+}

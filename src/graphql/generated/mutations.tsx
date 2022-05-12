@@ -152,11 +152,19 @@ export type InputUpdateChapter = {
   description?: Maybe<Scalars["String"]>;
 };
 
+export type InputUpdateProfile = {
+  name: Scalars["String"];
+  avatarSeed: Scalars["String"];
+  avatarType: Scalars["String"];
+  bio: Scalars["String"];
+};
+
 export type Mutation = {
   __typename?: "Mutation";
   createUser: User;
   login: User;
   logout: Scalars["Boolean"];
+  updateProfile: User;
   createBook: Book;
   deleteBook: Scalars["Boolean"];
   createChapter: Chapter;
@@ -181,6 +189,10 @@ export type MutationCreateUserArgs = {
 export type MutationLoginArgs = {
   password: Scalars["String"];
   email: Scalars["String"];
+};
+
+export type MutationUpdateProfileArgs = {
+  data: InputUpdateProfile;
 };
 
 export type MutationCreateBookArgs = {
@@ -500,6 +512,26 @@ export type UpdateChapterMutationVariables = Exact<{
 
 export type UpdateChapterMutation = { __typename?: "Mutation" } & {
   updateChapter: { __typename?: "Chapter" } & ChapterFragment;
+};
+
+export type UpdateProfileMutationVariables = Exact<{
+  data: InputUpdateProfile;
+}>;
+
+export type UpdateProfileMutation = { __typename?: "Mutation" } & {
+  updateProfile: { __typename?: "User" } & Pick<
+    User,
+    "id" | "name" | "username" | "avatarType" | "avatarSeed" | "bio"
+  > & {
+      followers: Array<
+        { __typename?: "Follow" } & Pick<Follow, "leaderId" | "followId">
+      >;
+      _count: { __typename?: "_Count" } & Pick<
+        _Count,
+        "chapters" | "followers" | "following"
+      >;
+      chapters: Array<{ __typename?: "Chapter" } & ChapterFragment>;
+    };
 };
 
 export const CommentFragmentDoc = gql`
@@ -1180,4 +1212,72 @@ export type UpdateChapterMutationResult =
 export type UpdateChapterMutationOptions = Apollo.BaseMutationOptions<
   UpdateChapterMutation,
   UpdateChapterMutationVariables
+>;
+export const UpdateProfileDocument = gql`
+  mutation UpdateProfile($data: InputUpdateProfile!) {
+    updateProfile(data: $data) {
+      id
+      name
+      username
+      avatarType
+      avatarSeed
+      bio
+      followers {
+        leaderId
+        followId
+      }
+      _count {
+        chapters
+        followers
+        following
+      }
+      chapters {
+        ...Chapter
+      }
+    }
+  }
+  ${ChapterFragmentDoc}
+`;
+export type UpdateProfileMutationFn = Apollo.MutationFunction<
+  UpdateProfileMutation,
+  UpdateProfileMutationVariables
+>;
+
+/**
+ * __useUpdateProfileMutation__
+ *
+ * To run a mutation, you first call `useUpdateProfileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateProfileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateProfileMutation, { data, loading, error }] = useUpdateProfileMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useUpdateProfileMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateProfileMutation,
+    UpdateProfileMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    UpdateProfileMutation,
+    UpdateProfileMutationVariables
+  >(UpdateProfileDocument, options);
+}
+export type UpdateProfileMutationHookResult = ReturnType<
+  typeof useUpdateProfileMutation
+>;
+export type UpdateProfileMutationResult =
+  Apollo.MutationResult<UpdateProfileMutation>;
+export type UpdateProfileMutationOptions = Apollo.BaseMutationOptions<
+  UpdateProfileMutation,
+  UpdateProfileMutationVariables
 >;

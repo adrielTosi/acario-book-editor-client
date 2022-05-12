@@ -1,5 +1,6 @@
 import { GetUserQuery } from "graphql/generated/graphqlTypes";
 import { useAvatar } from "lib/hooks/useAvatar";
+import router, { useRouter } from "next/router";
 import React from "react";
 import styled, { css } from "styled-components";
 import theme from "styles/theme";
@@ -11,14 +12,14 @@ import { Pill } from "./ui/Pill";
 
 export type SidebarProps = {
   data: GetUserQuery;
-  displayFollow?: boolean;
+  isDashboard?: boolean;
   handleFollow?: () => void;
   handleUnfollow?: () => void;
   currentUserAlreadyFollows?: boolean | null;
 };
 export const Sidebar = ({
   data,
-  displayFollow = true,
+  isDashboard = false,
   handleFollow,
   handleUnfollow,
   currentUserAlreadyFollows,
@@ -28,6 +29,9 @@ export const Sidebar = ({
     type: data.getUser.avatarType,
   });
 
+  const router = useRouter();
+  const currentPath = router.pathname;
+  console.log(router);
   return (
     <Wrapper>
       <Box
@@ -42,7 +46,7 @@ export const Sidebar = ({
           name={data.getUser.name}
           username={data.getUser.username}
         />
-        {displayFollow && (
+        {!isDashboard && (
           <Button
             p="6px 14px"
             round
@@ -50,6 +54,17 @@ export const Sidebar = ({
             variant={currentUserAlreadyFollows ? "secondary" : "primary"}
           >
             {currentUserAlreadyFollows ? "Unfollow" : "Follow"}
+          </Button>
+        )}
+        {isDashboard && currentPath !== "/dashboard/edit" && (
+          <Button
+            variant="secondary"
+            lined
+            round
+            p="6px 14px"
+            onClick={() => router.push("/dashboard/edit")}
+          >
+            Edit
           </Button>
         )}
       </Box>

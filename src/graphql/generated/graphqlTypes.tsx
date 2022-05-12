@@ -151,11 +151,19 @@ export type InputUpdateChapter = {
   description?: Maybe<Scalars["String"]>;
 };
 
+export type InputUpdateProfile = {
+  name: Scalars["String"];
+  avatarSeed: Scalars["String"];
+  avatarType: Scalars["String"];
+  bio: Scalars["String"];
+};
+
 export type Mutation = {
   __typename?: "Mutation";
   createUser: User;
   login: User;
   logout: Scalars["Boolean"];
+  updateProfile: User;
   createBook: Book;
   deleteBook: Scalars["Boolean"];
   createChapter: Chapter;
@@ -180,6 +188,10 @@ export type MutationCreateUserArgs = {
 export type MutationLoginArgs = {
   password: Scalars["String"];
   email: Scalars["String"];
+};
+
+export type MutationUpdateProfileArgs = {
+  data: InputUpdateProfile;
 };
 
 export type MutationCreateBookArgs = {

@@ -13,6 +13,7 @@ import { usePrivateRoute } from "lib/auth";
 import { last } from "lodash";
 import { GetServerSideProps, NextPage } from "next";
 import React from "react";
+import theme from "styles/theme";
 import { ServerSideProps } from "types/ServerSideProps";
 
 type HomeProps = ServerSideProps<GetUserQuery>;
@@ -36,7 +37,7 @@ const Dasboard: NextPage<HomeProps> = (props) => {
 
   return (
     <Box className="container" position="relative">
-      <WithSidebar data={props.data} displayFollow={false}>
+      <WithSidebar data={props.data} isDashboard={true}>
         {loading ? (
           <Box textAlign="center">Loading . . .</Box>
         ) : error ? (
@@ -48,7 +49,15 @@ const Dasboard: NextPage<HomeProps> = (props) => {
             ))}
 
             {data?.getTimelineChapters.hasMore && (
-              <Button onClick={handleFetchMore}>More...</Button>
+              <Box
+                textAlign="center"
+                borderTop={`1px solid ${theme.colors.comp_outline}`}
+                pt="1em"
+              >
+                <Button onClick={handleFetchMore} lined>
+                  More...
+                </Button>
+              </Box>
             )}
           </>
         )}
