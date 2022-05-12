@@ -21,7 +21,6 @@ const importStyle = async (type: AvatarTypes) => {
 export const useAvatar = ({ seed, type }: UseAvatarProps) => {
   const [svg, setSvg] = useState("");
   useEffect(() => {
-    console.log("rendered");
     const awaitSVG = async () => {
       const style = await importStyle(type);
 
