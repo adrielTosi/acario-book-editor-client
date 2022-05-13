@@ -396,7 +396,7 @@ export type CommentFragment = { __typename: "Comment" } & Pick<
 
 export type CurrentUserFragFragment = { __typename?: "User" } & Pick<
   User,
-  "id" | "username"
+  "id" | "name" | "username" | "avatarType" | "avatarSeed"
 >;
 
 export type CreateChapterMutationVariables = Exact<{
@@ -462,7 +462,7 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 export type LoginMutation = { __typename?: "Mutation" } & {
-  login: { __typename?: "User" } & Pick<User, "email">;
+  login: { __typename?: "User" } & CurrentUserFragFragment;
 };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never }>;
@@ -582,7 +582,10 @@ export const ChapterFragmentDoc = gql`
 export const CurrentUserFragFragmentDoc = gql`
   fragment CurrentUserFrag on User {
     id
+    name
     username
+    avatarType
+    avatarSeed
   }
 `;
 export const CreateChapterDocument = gql`
@@ -904,9 +907,10 @@ export type FollowUserMutationOptions = Apollo.BaseMutationOptions<
 export const LoginDocument = gql`
   mutation Login($email: String!, $password: String!) {
     login(password: $password, email: $email) {
-      email
+      ...CurrentUserFrag
     }
   }
+  ${CurrentUserFragFragmentDoc}
 `;
 export type LoginMutationFn = Apollo.MutationFunction<
   LoginMutation,

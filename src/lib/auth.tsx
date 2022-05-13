@@ -3,6 +3,7 @@ import { useLogoutMutation } from "graphql/generated/mutations";
 import { useCurrentUser } from "graphql/generated/page";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import { useStore } from "store/globalState";
 
 export const usePrivateRoute = () => {
   const router = useRouter();
@@ -23,10 +24,9 @@ export const useAppLogout = () => {
 
   const logoutFunction = async () => {
     try {
-      await logout();
       await apolloClient.resetStore();
+      await logout();
     } catch (err) {
-      // todo: HANDLE ERROR
       console.log(err);
     }
   };

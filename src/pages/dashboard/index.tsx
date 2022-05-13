@@ -18,11 +18,11 @@ import { ServerSideProps } from "types/ServerSideProps";
 
 type HomeProps = ServerSideProps<GetUserQuery>;
 
-const Dasboard: NextPage<HomeProps> = (props) => {
+const Dashboard: NextPage<HomeProps> = (props) => {
   usePrivateRoute();
-  const { data, loading, error, variables, fetchMore } = useGetTimelineTales(
-    () => ({ variables: { take: 2 } })
-  );
+  const { data, loading, error, fetchMore } = useGetTimelineTales(() => ({
+    variables: { take: 2 },
+  }));
   if (props.error) {
     return <div className="has-text-centered">{props.error}</div>;
   }
@@ -44,8 +44,8 @@ const Dasboard: NextPage<HomeProps> = (props) => {
           <Box>{error.message}</Box>
         ) : (
           <>
-            {data?.getTimelineChapters.chapters.map((chapter, i) => (
-              <StoryCard {...chapter} format="horizontal" />
+            {data?.getTimelineChapters.chapters.map((chapter) => (
+              <StoryCard {...chapter} format="horizontal" key={chapter.id} />
             ))}
 
             {data?.getTimelineChapters.hasMore && (
@@ -66,7 +66,7 @@ const Dasboard: NextPage<HomeProps> = (props) => {
   );
 };
 
-export default withApollo(Dasboard);
+export default withApollo(Dashboard);
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
