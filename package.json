@@ -32,7 +32,8 @@
     "sass": "^1.35.1",
     "styled-components": "^5.3.3",
     "styled-system": "^5.1.5",
-    "yup": "^0.32.9"
+    "yup": "^0.32.9",
+    "zustand": "^4.0.0-rc.1"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "1.21.6",

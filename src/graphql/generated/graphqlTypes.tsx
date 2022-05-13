@@ -395,7 +395,7 @@ export type CommentFragment = { __typename: "Comment" } & Pick<
 
 export type CurrentUserFragFragment = { __typename?: "User" } & Pick<
   User,
-  "id" | "username"
+  "id" | "name" | "username" | "avatarType" | "avatarSeed"
 >;
 
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never }>;
@@ -500,7 +500,10 @@ export const ChapterFragmentDoc = gql`
 export const CurrentUserFragFragmentDoc = gql`
   fragment CurrentUserFrag on User {
     id
+    name
     username
+    avatarType
+    avatarSeed
   }
 `;
 export const CurrentUserDocument = gql`

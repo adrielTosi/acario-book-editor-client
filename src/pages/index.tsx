@@ -1,13 +1,16 @@
 import { withApollo } from "apollo/withApollo";
 import { NextPage } from "next";
-import React from "react";
+import React, { useEffect } from "react";
 import { H1, H2 } from "components/typography/Heading";
 import Link from "next/link";
 import { Button } from "components/ui/Button";
 import { useAppLogout } from "lib/auth";
+import { useCurrentUser } from "graphql/generated/page";
+import { useStore } from "store/globalState";
 
 const Home: NextPage = (_) => {
   const logout = useAppLogout();
+
   return (
     <div className="container">
       <div className="">

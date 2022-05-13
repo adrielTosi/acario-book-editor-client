@@ -1,4 +1,7 @@
 fragment CurrentUserFrag on User {
   id
+  name
   username
+  avatarType
+  avatarSeed
 }

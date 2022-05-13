@@ -9,6 +9,7 @@ import { Box } from "components/ui/Box";
 import { StyledField } from "components/ui/StyledField";
 import { StyledLabel } from "components/ui/StyledLabel";
 import { Button } from "components/ui/Button";
+import { useStore } from "store/globalState";
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email("Please enter valid email.").required("Required"),
@@ -41,10 +42,11 @@ const Login = () => {
                         password: values.password,
                       },
                     });
+
                     if (typeof router.query.next === "string") {
                       router.push(router.query.next);
                     } else {
-                      router.push("/");
+                      router.push("/dashboard");
                     }
                   } catch (err) {
                     setError((err as any).message);
@@ -56,16 +58,19 @@ const Login = () => {
                     <Box mb="1em">
                       <StyledLabel htmlFor="email">Email:</StyledLabel>
                       <StyledField name="email" type="email" />
-                      {errors.email && touched.email ? <div>{errors.email}</div> : null}
+                      {errors.email && touched.email ? (
+                        <div>{errors.email}</div>
+                      ) : null}
                     </Box>
                     <Box mb="1em">
                       <StyledLabel htmlFor="password">Password:</StyledLabel>
                       <StyledField name="password" type="password" />
-                      {errors.password && touched.password ? <div>{errors.password}</div> : null}
+                      {errors.password && touched.password ? (
+                        <div>{errors.password}</div>
+                      ) : null}
                     </Box>
                     <Box textAlign="right" mt="1em">
                       <Button type="submit">Login</Button>
-
                     </Box>
                     {error && <div>{error}</div>}
                   </Form>

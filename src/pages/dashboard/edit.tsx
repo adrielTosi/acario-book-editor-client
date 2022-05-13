@@ -15,6 +15,7 @@ import { usePrivateRoute } from "lib/auth";
 import { GetServerSideProps, NextPage } from "next";
 import router from "next/router";
 import { toast } from "react-toastify";
+import { useStore } from "store/globalState";
 import theme from "styles/theme";
 import { ServerSideProps } from "types/ServerSideProps";
 import * as Yup from "yup";
@@ -58,7 +59,7 @@ const EditProfile: NextPage<EditProfileProps> = (props) => {
 
   const handleSubmit = async (values: typeof initialValues) => {
     try {
-      await updateProfile({
+      const { data } = await updateProfile({
         variables: {
           data: {
             avatarSeed: values.avatarSeed,

@@ -31,7 +31,7 @@ export const Sidebar = ({
 
   const router = useRouter();
   const currentPath = router.pathname;
-  console.log(router);
+
   return (
     <Wrapper>
       <Box

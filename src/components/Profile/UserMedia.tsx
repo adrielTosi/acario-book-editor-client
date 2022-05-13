@@ -1,4 +1,5 @@
 import { Text } from "components/typography/Text";
+import { AppLink } from "components/ui/AppLink";
 import { Box } from "components/ui/Box";
 import Link from "next/link";
 import styled, { css } from "styled-components";
@@ -28,7 +29,7 @@ export const UserMedia = ({
       <div>
         <Text size={size}>{name}</Text>
         <Username size={size}>
-          <Link href={`/user/${username}`}>{usernameToDisplay}</Link>
+          <AppLink href={`/user/${username}`}>{usernameToDisplay}</AppLink>
         </Username>
       </div>
     </Wrapper>
