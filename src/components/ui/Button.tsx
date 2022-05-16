@@ -2,7 +2,7 @@ import styled, { css } from "styled-components";
 import { space, SpaceProps } from "styled-system";
 
 export interface ButtonProps extends SpaceProps {
-  variant?: "primary" | "secondary" | "danger";
+  variant?: "primary" | "secondary" | "danger" | "ghost";
   pill?: boolean;
   round?: boolean;
   loading?: boolean;
@@ -14,6 +14,8 @@ export const Button = styled.button<ButtonProps>`
   border-radius: ${(props) => (props.pill || props.round ? "999px" : "4px")};
   height: fit-content;
   cursor: pointer;
+  display: flex;
+  align-items: center;
   padding: ${(props) => {
     if (!props.round) {
       return css`8px 24px`;
@@ -45,6 +47,36 @@ export const Button = styled.button<ButtonProps>`
         }
         &:disabled {
           background-color: ${theme.colors.accent_2_200};
+          cursor: not-allowed;
+        }
+      `;
+    }
+    if (variant === "ghost") {
+      if (lined) {
+        return css`
+          border: 1px solid ${theme.colors.contrast_med};
+          color: ${theme.colors.contrast_med};
+          background-color: transparent;
+          &:hover {
+            color: ${theme.colors.contrast_high};
+            border: 1px solid ${theme.colors.contrast_high};
+            background-color: ${theme.colors.contrast_low};
+          }
+          &:disabled {
+            background-color: lightgray;
+            cursor: not-allowed;
+          }
+        `;
+      }
+      return css`
+        background-color: ${theme.colors.contrast_low};
+        color: ${theme.colors.contrast_high};
+        &:hover {
+          background-color: ${theme.colors.contrast_med};
+        }
+        &:disabled {
+          background-color: lightgray;
+
           cursor: not-allowed;
         }
       `;

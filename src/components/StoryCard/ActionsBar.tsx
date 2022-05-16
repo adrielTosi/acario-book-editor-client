@@ -3,9 +3,12 @@ import { IconContext } from "@react-icons/all-files";
 import { BiCommentAdd } from "@react-icons/all-files/bi/BiCommentAdd";
 import { TiThumbsDown } from "@react-icons/all-files/ti/TiThumbsDown";
 import { TiThumbsUp } from "@react-icons/all-files/ti/TiThumbsUp";
+import { HiDotsHorizontal } from "@react-icons/all-files/hi/HiDotsHorizontal";
+import { AiOutlineSave } from "@react-icons/all-files/ai/AiOutlineSave";
 import {
   ReactToChapterMutation,
   useReactToChapterMutation,
+  useSaveToReadLaterMutation,
 } from "graphql/generated/mutations";
 import { useCurrentUser } from "graphql/generated/page";
 import { useMemo } from "react";
@@ -13,6 +16,8 @@ import { toast } from "react-toastify";
 import styled, { css } from "styled-components";
 import theme from "styles/theme";
 import { StoryCardProps } from "./StoryCard";
+import { DropdownMenu, DropdownMenuItem } from "components/ui/DropdownMenu";
+import { Box } from "components/ui/Box";
 
 const updateCache = (
   cache: ApolloCache<ReactToChapterMutation>,
@@ -38,12 +43,13 @@ const updateCache = (
 };
 
 type ActionsBarProps = {
-  props: StoryCardProps;
+  props: Omit<StoryCardProps, "format">;
   onCommentClick?: () => void;
 };
 
 export const ActionsBar = ({ props, onCommentClick }: ActionsBarProps) => {
   const [reactToChapter] = useReactToChapterMutation();
+  const [saveToLater] = useSaveToReadLaterMutation();
   const currentUser = useCurrentUser();
   const client = useApolloClient();
 
@@ -77,7 +83,7 @@ export const ActionsBar = ({ props, onCommentClick }: ActionsBarProps) => {
       hasVoted: false,
     };
   }, [data?.reactions, currentUser.data]);
-  // console.log(props);
+
   const handleUpvote = async () => {
     try {
       await reactToChapter({
@@ -129,6 +135,35 @@ export const ActionsBar = ({ props, onCommentClick }: ActionsBarProps) => {
     return theme.colors.contrast_med;
   };
 
+  const MenuItems: DropdownMenuItem[] = [
+    {
+      label: (
+        <Box display="flex" alignItems="center">
+          <AiOutlineSave />
+          &nbsp; Read later
+        </Box>
+      ),
+      text: "read later",
+      onClick: async () => {
+        try {
+          await saveToLater({ variables: { id: props.id } });
+          toast(
+            <span>
+              Added <strong>{props.title}</strong> to read later.
+            </span>,
+            {
+              toastId: props.title,
+            }
+          );
+        } catch (err: any) {
+          toast(err.message, {
+            toastId: props.title,
+          });
+        }
+      },
+    },
+  ];
+
   return (
     <IconContext.Provider value={{ size: "24px" }}>
       <Wrapper>
@@ -156,6 +191,14 @@ export const ActionsBar = ({ props, onCommentClick }: ActionsBarProps) => {
             }}
           />
         </ActionButton>
+        <DropdownMenu
+          data={MenuItems}
+          trigger={
+            <ActionButton>
+              <HiDotsHorizontal style={{ color: theme.colors.contrast_med }} />
+            </ActionButton>
+          }
+        />
       </Wrapper>
     </IconContext.Provider>
   );

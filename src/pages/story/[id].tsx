@@ -5,10 +5,12 @@ import { withApollo } from "apollo/withApollo";
 import { Comment } from "components/Comment/Comment";
 import { ActionsBar } from "components/StoryCard/ActionsBar";
 import { TextEditor } from "components/TextEditor/Editor";
+import { ExpandButton } from "components/TextEditor/ExpandButton";
 import { H1 } from "components/typography/Heading";
 import { Text } from "components/typography/Text";
 import { Box } from "components/ui/Box";
 import { Button } from "components/ui/Button";
+import { PageTitle } from "components/ui/PageTitle";
 import { StyledField } from "components/ui/StyledField";
 import {
   CommentFragment,
@@ -217,14 +219,17 @@ const Story: NextPage<StoryProps> = ({ error, data }) => {
         )}
 
         {/* TITLE */}
-        <Box marginBottom="1em" className="columns">
-          <H1>{data.getChapter.title}</H1>
-        </Box>
-        <Box marginBottom="1em">
+        <PageTitle text={data.getChapter.title} />
+
+        <Box marginBottom="2em" mt="1em" color={theme.colors.contrast_med}>
           <Text>{data.getChapter.description}</Text>
         </Box>
 
         {/* TEXT */}
+
+        {/* <Box position="relative">
+          <ExpandButton />
+        </Box> */}
         <TextEditor editor={editor} readOnly={true} />
 
         {/* INTERACTIONS */}

@@ -1,0 +1,11 @@
+query GetAllReadLater($take: Float!, $offset: Float!) {
+  getAllSavedChapter(take: $take, offset: $offset) {
+    readLater {
+      createdAt
+      chapter {
+        ...Chapter
+      }
+    }
+    hasMore
+  }
+}

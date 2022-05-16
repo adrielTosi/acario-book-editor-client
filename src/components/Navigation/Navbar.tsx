@@ -3,12 +3,12 @@ import { useCurrentUser } from "graphql/generated/page";
 import Link from "next/link";
 import styled from "styled-components";
 import theme from "styles/theme";
-import logo from "../images/Logo.png";
-import { H6Link } from "./typography/Heading";
-import { Text } from "./typography/Text";
-import { AppLink } from "./ui/AppLink";
-import { Avatar } from "./ui/Avatar";
-import { Box } from "./ui/Box";
+import logo from "../../images/Logo.png";
+import { H6Link } from "../typography/Heading";
+import { Text } from "../typography/Text";
+import { AppLink } from "../ui/AppLink";
+import { Avatar } from "../ui/Avatar";
+import { Box } from "../ui/Box";
 
 const NavbarComp = () => {
   const { data, loading, error } = useCurrentUser();
