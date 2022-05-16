@@ -46,6 +46,18 @@ export const getApolloClient = (
                 };
               },
             },
+            getAllSavedChapter: {
+              keyArgs: false,
+              merge(existing, incoming) {
+                return {
+                  ...incoming,
+                  readLater: [
+                    ...(existing?.readLater || []),
+                    ...incoming.readLater,
+                  ],
+                };
+              },
+            },
           },
         },
       },

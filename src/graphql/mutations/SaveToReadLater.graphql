@@ -1,0 +1,8 @@
+mutation SaveToReadLater($id: String!) {
+  saveChapterToReadLater(id: $id) {
+    createdAt
+    chapter {
+      ...Chapter
+    }
+  }
+}

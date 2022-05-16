@@ -180,6 +180,7 @@ export type Mutation = {
   deleteComment: Comment;
   reactToBook: BookReactionResponse;
   reactToChapter: ChapterReactionResponse;
+  saveChapterToReadLater: ReadLater;
 };
 
 export type MutationCreateUserArgs = {
@@ -259,6 +260,16 @@ export type MutationReactToChapterArgs = {
   id: Scalars["String"];
 };
 
+export type MutationSaveChapterToReadLaterArgs = {
+  id: Scalars["String"];
+};
+
+export type PaginatedReadLater = {
+  __typename?: "PaginatedReadLater";
+  readLater: Array<ReadLater>;
+  hasMore: Scalars["Boolean"];
+};
+
 export type PaginatedTimelineBooks = {
   __typename?: "PaginatedTimelineBooks";
   books: Array<Book>;
@@ -283,6 +294,8 @@ export type Query = {
   getChaptersFromBook: Array<Chapter>;
   getChapter: Chapter;
   getChaptersFromUser: Array<Chapter>;
+  getAllSavedChapter: PaginatedReadLater;
+  removeFromReadLater: ReadLater;
 };
 
 export type QueryGetUserArgs = {
@@ -317,6 +330,24 @@ export type QueryGetChapterArgs = {
 
 export type QueryGetChaptersFromUserArgs = {
   username: Scalars["String"];
+};
+
+export type QueryGetAllSavedChapterArgs = {
+  offset: Scalars["Float"];
+  take: Scalars["Float"];
+};
+
+export type QueryRemoveFromReadLaterArgs = {
+  id: Scalars["String"];
+};
+
+export type ReadLater = {
+  __typename?: "ReadLater";
+  author: User;
+  authorId: Scalars["String"];
+  chapter: Chapter;
+  chapterId: Scalars["String"];
+  createdAt: Scalars["String"];
 };
 
 export type Tag = {
@@ -493,6 +524,17 @@ export type RegisterMutationVariables = Exact<{
 
 export type RegisterMutation = { __typename?: "Mutation" } & {
   createUser: { __typename?: "User" } & CurrentUserFragFragment;
+};
+
+export type SaveToReadLaterMutationVariables = Exact<{
+  id: Scalars["String"];
+}>;
+
+export type SaveToReadLaterMutation = { __typename?: "Mutation" } & {
+  saveChapterToReadLater: { __typename?: "ReadLater" } & Pick<
+    ReadLater,
+    "createdAt"
+  > & { chapter: { __typename?: "Chapter" } & ChapterFragment };
 };
 
 export type UnfollowUserMutationVariables = Exact<{
@@ -1114,6 +1156,60 @@ export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<
   RegisterMutation,
   RegisterMutationVariables
+>;
+export const SaveToReadLaterDocument = gql`
+  mutation SaveToReadLater($id: String!) {
+    saveChapterToReadLater(id: $id) {
+      createdAt
+      chapter {
+        ...Chapter
+      }
+    }
+  }
+  ${ChapterFragmentDoc}
+`;
+export type SaveToReadLaterMutationFn = Apollo.MutationFunction<
+  SaveToReadLaterMutation,
+  SaveToReadLaterMutationVariables
+>;
+
+/**
+ * __useSaveToReadLaterMutation__
+ *
+ * To run a mutation, you first call `useSaveToReadLaterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSaveToReadLaterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [saveToReadLaterMutation, { data, loading, error }] = useSaveToReadLaterMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useSaveToReadLaterMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SaveToReadLaterMutation,
+    SaveToReadLaterMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    SaveToReadLaterMutation,
+    SaveToReadLaterMutationVariables
+  >(SaveToReadLaterDocument, options);
+}
+export type SaveToReadLaterMutationHookResult = ReturnType<
+  typeof useSaveToReadLaterMutation
+>;
+export type SaveToReadLaterMutationResult =
+  Apollo.MutationResult<SaveToReadLaterMutation>;
+export type SaveToReadLaterMutationOptions = Apollo.BaseMutationOptions<
+  SaveToReadLaterMutation,
+  SaveToReadLaterMutationVariables
 >;
 export const UnfollowUserDocument = gql`
   mutation UnfollowUser($id: String!) {

@@ -62,6 +62,70 @@ export const ssrCurrentUser = {
   withPage: withPageCurrentUser,
   usePage: useCurrentUser,
 };
+export async function getServerPageGetAllReadLater(
+  options: Omit<
+    Apollo.QueryOptions<Types.GetAllReadLaterQueryVariables>,
+    "query"
+  >,
+  ctx?: any
+) {
+  const apolloClient = getApolloClient(ctx);
+
+  const data = await apolloClient.query<Types.GetAllReadLaterQuery>({
+    ...options,
+    query: Operations.GetAllReadLaterDocument,
+  });
+
+  const apolloState = apolloClient.cache.extract();
+
+  return {
+    props: {
+      apolloState: apolloState,
+      data: data?.data,
+      error: data?.error ?? data?.errors ?? null,
+    },
+  };
+}
+export const useGetAllReadLater = (
+  optionsFunc?: (
+    router: NextRouter
+  ) => QueryHookOptions<
+    Types.GetAllReadLaterQuery,
+    Types.GetAllReadLaterQueryVariables
+  >
+) => {
+  const router = useRouter();
+  const options = optionsFunc ? optionsFunc(router) : {};
+  return useQuery(Operations.GetAllReadLaterDocument, options);
+};
+export type PageGetAllReadLaterComp = React.FC<{
+  data?: Types.GetAllReadLaterQuery;
+  error?: Apollo.ApolloError;
+}>;
+export const withPageGetAllReadLater =
+  (
+    optionsFunc?: (
+      router: NextRouter
+    ) => QueryHookOptions<
+      Types.GetAllReadLaterQuery,
+      Types.GetAllReadLaterQueryVariables
+    >
+  ) =>
+  (WrappedComponent: PageGetAllReadLaterComp): NextPage =>
+  (props) => {
+    const router = useRouter();
+    const options = optionsFunc ? optionsFunc(router) : {};
+    const { data, error } = useQuery(
+      Operations.GetAllReadLaterDocument,
+      options
+    );
+    return <WrappedComponent {...props} data={data} error={error} />;
+  };
+export const ssrGetAllReadLater = {
+  getServerPage: getServerPageGetAllReadLater,
+  withPage: withPageGetAllReadLater,
+  usePage: useGetAllReadLater,
+};
 export async function getServerPageGetChapter(
   options: Omit<Apollo.QueryOptions<Types.GetChapterQueryVariables>, "query">,
   ctx?: any

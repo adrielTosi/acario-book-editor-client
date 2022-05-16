@@ -1,5 +1,5 @@
 import { withApollo } from "apollo/withApollo";
-import { WithSidebar } from "components/Sidebar";
+import { WithSidebar } from "components/Navigation/Sidebar";
 import { StoryCard } from "components/StoryCard/StoryCard";
 import { Box } from "components/ui/Box";
 import { Button } from "components/ui/Button";

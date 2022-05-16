@@ -4,11 +4,14 @@ import router, { useRouter } from "next/router";
 import React from "react";
 import styled, { css } from "styled-components";
 import theme from "styles/theme";
-import { UserMedia } from "./Profile/UserMedia";
-import { Text } from "./typography/Text";
-import { Box } from "./ui/Box";
-import { Button } from "./ui/Button";
-import { Pill } from "./ui/Pill";
+import { UserMedia } from "../Profile/UserMedia";
+import { Text } from "../typography/Text";
+import { AppLink } from "../ui/AppLink";
+import { Box } from "../ui/Box";
+import { Button } from "../ui/Button";
+import { Pill } from "../ui/Pill";
+import { AiOutlineSave } from "@react-icons/all-files/ai/AiOutlineSave";
+import { SidebarItem } from "./SidebarItem";
 
 export type SidebarProps = {
   data: GetUserQuery;
@@ -86,9 +89,17 @@ export const Sidebar = ({
           </div>
         </div>
       </Box>
-      <Box mt="1em">
+      <Box mt="1em" mb="1em">
         <Bio>{data.getUser.bio}</Bio>
       </Box>
+
+      {isDashboard && (
+        <SidebarItem
+          text="Read later"
+          icon={<AiOutlineSave size="24px" />}
+          link="/readlater"
+        />
+      )}
     </Wrapper>
   );
 };
@@ -144,4 +155,9 @@ const Bio = styled.p`
   font-size: 14px;
   padding: 8px;
   border-radius: 4px;
+`;
+
+const NavItem = styled(AppLink)`
+  width: 100%;
+  padding: 4px 8px;
 `;
