@@ -57,6 +57,7 @@ export type Chapter = {
   title: Scalars["String"];
   text: Scalars["String"];
   description: Scalars["String"];
+  status: Scalars["String"];
   chapterNumber: Scalars["Float"];
   likes: Scalars["Int"];
   dislikes: Scalars["Int"];
@@ -87,6 +88,12 @@ export type ChapterReactionResponse = {
   hasVoted: Scalars["Boolean"];
 };
 
+/** The status of the Tale */
+export enum ChapterStatus {
+  Published = "Published",
+  Draft = "Draft",
+}
+
 export type Comment = {
   __typename?: "Comment";
   id: Scalars["ID"];
@@ -108,6 +115,7 @@ export type Follow = {
 export type InputCreateChapter = {
   title: Scalars["String"];
   bookId?: Maybe<Scalars["String"]>;
+  status: Scalars["String"];
   text: Scalars["String"];
   description: Scalars["String"];
   tags?: Maybe<Array<InputTag>>;
@@ -171,6 +179,7 @@ export type Mutation = {
   updateChapter: Chapter;
   addChapterToBook: Chapter;
   deleteChapter: Chapter;
+  changeStatus: Chapter;
   createTags: Array<Tag>;
   deleteTag: Scalars["Boolean"];
   followUser: Follow;
@@ -221,6 +230,11 @@ export type MutationDeleteChapterArgs = {
   chapterId: Scalars["String"];
 };
 
+export type MutationChangeStatusArgs = {
+  id: Scalars["String"];
+  newStatus: ChapterStatus;
+};
+
 export type MutationCreateTagsArgs = {
   data: InputCreateTags;
 };
@@ -264,6 +278,12 @@ export type MutationSaveChapterToReadLaterArgs = {
   id: Scalars["String"];
 };
 
+export type PaginatedDrafts = {
+  __typename?: "PaginatedDrafts";
+  drafts: Array<Chapter>;
+  hasMore: Scalars["Boolean"];
+};
+
 export type PaginatedReadLater = {
   __typename?: "PaginatedReadLater";
   readLater: Array<ReadLater>;
@@ -294,6 +314,7 @@ export type Query = {
   getChaptersFromBook: Array<Chapter>;
   getChapter: Chapter;
   getChaptersFromUser: Array<Chapter>;
+  getDrafts: PaginatedDrafts;
   getAllSavedChapter: PaginatedReadLater;
   removeFromReadLater: ReadLater;
 };
@@ -330,6 +351,11 @@ export type QueryGetChapterArgs = {
 
 export type QueryGetChaptersFromUserArgs = {
   username: Scalars["String"];
+};
+
+export type QueryGetDraftsArgs = {
+  offset: Scalars["Float"];
+  take: Scalars["Float"];
 };
 
 export type QueryGetAllSavedChapterArgs = {
@@ -397,6 +423,7 @@ export type ChapterFragment = { __typename: "Chapter" } & Pick<
   | "text"
   | "description"
   | "likes"
+  | "status"
   | "dislikes"
   | "createdAt"
 > & {
@@ -576,6 +603,15 @@ export type UpdateProfileMutation = { __typename?: "Mutation" } & {
     };
 };
 
+export type UpdateStatusMutationVariables = Exact<{
+  id: Scalars["String"];
+  newStatus: ChapterStatus;
+}>;
+
+export type UpdateStatusMutation = { __typename?: "Mutation" } & {
+  changeStatus: { __typename?: "Chapter" } & ChapterFragment;
+};
+
 export const CommentFragmentDoc = gql`
   fragment Comment on Comment {
     __typename
@@ -602,6 +638,7 @@ export const ChapterFragmentDoc = gql`
     text
     description
     likes
+    status
     dislikes
     createdAt
     author {
@@ -1380,4 +1417,56 @@ export type UpdateProfileMutationResult =
 export type UpdateProfileMutationOptions = Apollo.BaseMutationOptions<
   UpdateProfileMutation,
   UpdateProfileMutationVariables
+>;
+export const UpdateStatusDocument = gql`
+  mutation UpdateStatus($id: String!, $newStatus: ChapterStatus!) {
+    changeStatus(id: $id, newStatus: $newStatus) {
+      ...Chapter
+    }
+  }
+  ${ChapterFragmentDoc}
+`;
+export type UpdateStatusMutationFn = Apollo.MutationFunction<
+  UpdateStatusMutation,
+  UpdateStatusMutationVariables
+>;
+
+/**
+ * __useUpdateStatusMutation__
+ *
+ * To run a mutation, you first call `useUpdateStatusMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateStatusMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateStatusMutation, { data, loading, error }] = useUpdateStatusMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      newStatus: // value for 'newStatus'
+ *   },
+ * });
+ */
+export function useUpdateStatusMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateStatusMutation,
+    UpdateStatusMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    UpdateStatusMutation,
+    UpdateStatusMutationVariables
+  >(UpdateStatusDocument, options);
+}
+export type UpdateStatusMutationHookResult = ReturnType<
+  typeof useUpdateStatusMutation
+>;
+export type UpdateStatusMutationResult =
+  Apollo.MutationResult<UpdateStatusMutation>;
+export type UpdateStatusMutationOptions = Apollo.BaseMutationOptions<
+  UpdateStatusMutation,
+  UpdateStatusMutationVariables
 >;

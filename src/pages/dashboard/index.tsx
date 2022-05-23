@@ -45,7 +45,12 @@ const Dashboard: NextPage<HomeProps> = (props) => {
         ) : (
           <>
             {data?.getTimelineChapters.chapters.map((chapter) => (
-              <StoryCard {...chapter} format="horizontal" key={chapter.id} />
+              <StoryCard
+                {...chapter}
+                showActions={{ readLater: true }}
+                format="horizontal"
+                key={chapter.id}
+              />
             ))}
 
             {data?.getTimelineChapters.hasMore && (

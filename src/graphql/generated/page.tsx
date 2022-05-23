@@ -242,6 +242,58 @@ export const ssrGetChaptersFromUser = {
   withPage: withPageGetChaptersFromUser,
   usePage: useGetChaptersFromUser,
 };
+export async function getServerPageGetDrafts(
+  options: Omit<Apollo.QueryOptions<Types.GetDraftsQueryVariables>, "query">,
+  ctx?: any
+) {
+  const apolloClient = getApolloClient(ctx);
+
+  const data = await apolloClient.query<Types.GetDraftsQuery>({
+    ...options,
+    query: Operations.GetDraftsDocument,
+  });
+
+  const apolloState = apolloClient.cache.extract();
+
+  return {
+    props: {
+      apolloState: apolloState,
+      data: data?.data,
+      error: data?.error ?? data?.errors ?? null,
+    },
+  };
+}
+export const useGetDrafts = (
+  optionsFunc?: (
+    router: NextRouter
+  ) => QueryHookOptions<Types.GetDraftsQuery, Types.GetDraftsQueryVariables>
+) => {
+  const router = useRouter();
+  const options = optionsFunc ? optionsFunc(router) : {};
+  return useQuery(Operations.GetDraftsDocument, options);
+};
+export type PageGetDraftsComp = React.FC<{
+  data?: Types.GetDraftsQuery;
+  error?: Apollo.ApolloError;
+}>;
+export const withPageGetDrafts =
+  (
+    optionsFunc?: (
+      router: NextRouter
+    ) => QueryHookOptions<Types.GetDraftsQuery, Types.GetDraftsQueryVariables>
+  ) =>
+  (WrappedComponent: PageGetDraftsComp): NextPage =>
+  (props) => {
+    const router = useRouter();
+    const options = optionsFunc ? optionsFunc(router) : {};
+    const { data, error } = useQuery(Operations.GetDraftsDocument, options);
+    return <WrappedComponent {...props} data={data} error={error} />;
+  };
+export const ssrGetDrafts = {
+  getServerPage: getServerPageGetDrafts,
+  withPage: withPageGetDrafts,
+  usePage: useGetDrafts,
+};
 export async function getServerPageGetTimelineTales(
   options: Omit<
     Apollo.QueryOptions<Types.GetTimelineTalesQueryVariables>,

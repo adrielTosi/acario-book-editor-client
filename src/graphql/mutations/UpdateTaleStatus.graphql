@@ -1,0 +1,5 @@
+mutation UpdateStatus($id: String!, $newStatus: ChapterStatus!) {
+  changeStatus(id: $id, newStatus: $newStatus) {
+    ...Chapter
+  }
+}

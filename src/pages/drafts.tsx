@@ -4,16 +4,16 @@ import { StoryCard } from "components/StoryCard/StoryCard";
 import { H1 } from "components/typography/Heading";
 import { Box } from "components/ui/Box";
 import { Button } from "components/ui/Button";
-import { useGetAllReadLater } from "graphql/generated/page";
+import { useCurrentUser, useGetDrafts } from "graphql/generated/page";
 import { usePrivateRoute } from "lib/auth";
-import { NextPage } from "next";
 import router from "next/router";
 import { toast } from "react-toastify";
 import theme from "styles/theme";
 
-const ReadLater: NextPage = () => {
+const Drafts = () => {
   usePrivateRoute();
-  const { data, error, fetchMore } = useGetAllReadLater(() => ({
+  const { data: userData } = useCurrentUser();
+  const { data, fetchMore, error } = useGetDrafts(() => ({
     variables: { take: 2, offset: 0 },
   }));
 
@@ -24,7 +24,7 @@ const ReadLater: NextPage = () => {
 
   const handleFetchMore = () => {
     fetchMore({
-      variables: { take: 2, offset: data?.getAllSavedChapter.readLater.length },
+      variables: { take: 2, offset: data?.getDrafts.drafts.length },
     });
   };
 
@@ -41,24 +41,21 @@ const ReadLater: NextPage = () => {
           <FaChevronLeft /> &nbsp;Back
         </Button>
         <Box mt="8px">
-          &nbsp; <H1>Read Later</H1>
+          &nbsp; <H1>Drafts</H1>
         </Box>
       </Box>
       <Box mt="1em" className="columns is-multiline">
-        {data?.getAllSavedChapter.readLater.map((readLater) => (
-          <div
-            className="column is-6-tablet is-3-desktop"
-            key={readLater.chapter.id}
-          >
+        {data?.getDrafts.drafts.map((draft) => (
+          <div className="column is-6-tablet is-3-desktop" key={draft.id}>
             <StoryCard
-              {...readLater.chapter}
-              showActions={{}}
+              {...draft}
               format="vertical"
+              showActions={{ delete: true, edit: true, publish: true }}
             />
           </div>
         ))}
       </Box>
-      {data?.getAllSavedChapter.hasMore && (
+      {data?.getDrafts.hasMore && (
         <Box
           textAlign="center"
           borderTop={`1px solid ${theme.colors.comp_outline}`}
@@ -73,4 +70,4 @@ const ReadLater: NextPage = () => {
   );
 };
 
-export default withApollo(ReadLater);
+export default withApollo(Drafts);

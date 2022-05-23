@@ -11,6 +11,7 @@ import { Box } from "../ui/Box";
 import { Button } from "../ui/Button";
 import { Pill } from "../ui/Pill";
 import { AiOutlineSave } from "@react-icons/all-files/ai/AiOutlineSave";
+import { RiDraftLine } from "@react-icons/all-files/ri/RiDraftLine";
 import { SidebarItem } from "./SidebarItem";
 
 export type SidebarProps = {
@@ -94,11 +95,18 @@ export const Sidebar = ({
       </Box>
 
       {isDashboard && (
-        <SidebarItem
-          text="Read later"
-          icon={<AiOutlineSave size="24px" />}
-          link="/readlater"
-        />
+        <>
+          <SidebarItem
+            text="Read Later"
+            icon={<AiOutlineSave size="24px" />}
+            link="/readlater"
+          />
+          <SidebarItem
+            text="Drafts"
+            icon={<RiDraftLine size="24px" />}
+            link="/drafts"
+          />
+        </>
       )}
     </Wrapper>
   );

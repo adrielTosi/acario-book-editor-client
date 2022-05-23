@@ -9,7 +9,7 @@ import {
 import { PaginatedTimelineChapters } from "graphql/generated/graphqlTypes";
 // import { isServerSide } from "./utils/isServerSide";
 
-export const withApollo = (Comp: NextPage<any>) => (props: any) => {
+export const withApollo = (Comp: any) => (props: any) => {
   return (
     <ApolloProvider client={getApolloClient(null, props.apolloState)}>
       <Comp {...props} />
@@ -55,6 +55,15 @@ export const getApolloClient = (
                     ...(existing?.readLater || []),
                     ...incoming.readLater,
                   ],
+                };
+              },
+            },
+            getDrafts: {
+              keyArgs: false,
+              merge(existing, incoming) {
+                return {
+                  ...incoming,
+                  drafts: [...(existing?.drafts || []), ...incoming.drafts],
                 };
               },
             },

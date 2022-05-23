@@ -6,6 +6,7 @@ fragment Chapter on Chapter {
   text
   description
   likes
+  status
   dislikes
   createdAt
   author {
