@@ -1,31 +1,43 @@
+import { ActionButton } from "components/StoryCard/ActionsBar";
 import { useState } from "react";
 import styled from "styled-components";
+import { HiDotsHorizontal } from "@react-icons/all-files/hi/HiDotsHorizontal";
+import theme from "styles/theme";
+import { Box } from "./Box";
 
-export type DropdownMenuItem = {
-  text: string;
-  label: string | React.ReactNode;
-  onClick: () => void;
-};
+export type DropdownMenuItem =
+  | {
+      text: string;
+      label: string | React.ReactNode;
+      icon?: React.ReactNode;
+      onClick: () => void;
+      type?: "item" | "divider";
+    }
+  | { type: "divider" };
 export type DropdownMenuProps = {
-  trigger: React.ReactNode;
+  /**
+   * Optional trigger button, if undefined will have three dots
+   */
+  trigger?: React.ReactNode;
   data: DropdownMenuItem[];
 };
 
 export const DropdownMenu = ({ trigger, data }: DropdownMenuProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-
   return (
-    <div
-      className={`dropdown is-right ${isOpen ? "is-active" : ""}`}
-      onClick={() => setIsOpen((prev) => !prev)}
-    >
+    <div className={`dropdown is-right is-hoverable`}>
       <div className="dropdown-trigger">
         <TriggerButton
           className="button"
           aria-haspopup="true"
           aria-controls="dropdown-menu"
         >
-          {trigger}
+          {trigger ? (
+            trigger
+          ) : (
+            <ActionButton>
+              <HiDotsHorizontal style={{ color: theme.colors.contrast_med }} />
+            </ActionButton>
+          )}
           <span className="icon is-small">
             <i className="fas fa-angle-down" aria-hidden="true"></i>
           </span>
@@ -33,15 +45,23 @@ export const DropdownMenu = ({ trigger, data }: DropdownMenuProps) => {
       </div>
       <div className="dropdown-menu" id="dropdown-menu" role="menu">
         <Content className="dropdown-content">
-          {data.map((item) => (
-            <ItemButton
-              key={item.text}
-              className="dropdown-item"
-              onClick={() => item.onClick()}
-            >
-              {item.label}
-            </ItemButton>
-          ))}
+          {data.map((item) => {
+            if (item.type === "divider") {
+              return <Divider className="dropdown-divider" />;
+            } else {
+              return (
+                <ItemButton
+                  key={item.text}
+                  className="dropdown-item"
+                  onClick={() => item.onClick()}
+                >
+                  <Box display="flex" alignItems="center">
+                    {item.icon && <> {item.icon}&nbsp;</>} {item.label}
+                  </Box>
+                </ItemButton>
+              );
+            }
+          })}
         </Content>
       </div>
     </div>
@@ -64,4 +84,8 @@ const ItemButton = styled.button`
   &&.is-active {
     background-color: ${(props) => props.theme.colors.accent_2_200};
   }
+`;
+
+const Divider = styled.div`
+  background-color: ${(props) => props.theme.colors.comp_outline};
 `;

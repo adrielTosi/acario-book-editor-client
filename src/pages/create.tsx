@@ -6,6 +6,7 @@ import { Button } from "components/ui/Button";
 import { StyledField } from "components/ui/StyledField";
 import { StyledLabel } from "components/ui/StyledLabel";
 import { Form, Formik } from "formik";
+import { ChapterStatus } from "graphql/generated/graphqlTypes";
 import { useCreateChapterMutation } from "graphql/generated/mutations";
 import { useTipTap } from "lib/hooks/UseTipTap";
 import router from "next/router";
@@ -35,7 +36,14 @@ const Create = () => {
     if (text) {
       try {
         const chap = await createChapter({
-          variables: { chapterData: { title, description, text } },
+          variables: {
+            chapterData: {
+              title,
+              description,
+              text,
+              status: ChapterStatus.Published,
+            },
+          },
         });
         router.push("/dashboard");
         toast(`Create new Story: "${chap.data?.createChapter.title}"`, {

@@ -1,24 +1,21 @@
 import { gql, useApolloClient } from "@apollo/client";
-import { FiEdit } from "@react-icons/all-files/fi/FiEdit";
-import { RiDeleteBin5Fill } from "@react-icons/all-files/ri/RiDeleteBin5Fill";
 import { withApollo } from "apollo/withApollo";
 import { Comment } from "components/Comment/Comment";
 import { ActionsBar } from "components/StoryCard/ActionsBar";
 import { TextEditor } from "components/TextEditor/Editor";
-import { ExpandButton } from "components/TextEditor/ExpandButton";
-import { H1 } from "components/typography/Heading";
 import { Text } from "components/typography/Text";
 import { Box } from "components/ui/Box";
 import { Button } from "components/ui/Button";
 import { PageTitle } from "components/ui/PageTitle";
+import { Pill } from "components/ui/Pill";
 import { StyledField } from "components/ui/StyledField";
 import {
   CommentFragment,
   GetChapterQuery,
 } from "graphql/generated/graphqlTypes";
 import {
+  ChapterStatus,
   useCreateCommentMutation,
-  useDeleteChapterMutation,
   useDeleteCommentMutation,
   useEditCommentMutation,
 } from "graphql/generated/mutations";
@@ -26,7 +23,6 @@ import { ssrGetChapter, useCurrentUser } from "graphql/generated/page";
 import { useTipTap } from "lib/hooks/UseTipTap";
 import { GetServerSideProps, NextPage } from "next";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { ChangeEventHandler, useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
@@ -41,11 +37,9 @@ const Story: NextPage<StoryProps> = ({ error, data }) => {
     return null;
   } else {
     const client = useApolloClient();
-    const router = useRouter();
     const editor = useTipTap({ content: data.getChapter.text, readOnly: true });
 
     const { data: user } = useCurrentUser();
-    const [deleteChapter] = useDeleteChapterMutation();
     const [comment] = useCreateCommentMutation();
     const [deleteComment] = useDeleteCommentMutation();
     const [editComment] = useEditCommentMutation();
@@ -56,10 +50,14 @@ const Story: NextPage<StoryProps> = ({ error, data }) => {
     const isOwner = user?.currentUser.id === data.getChapter.authorId;
 
     // LIVE CACHEDD COMMENTS DATA
-    const commentsData = client.readFragment<{ comments: CommentFragment[] }>({
+    const cacheData = client.readFragment<{
+      comments: CommentFragment[];
+      status: ChapterStatus;
+    }>({
       id: "Chapter:" + data.getChapter.id,
       fragment: gql`
         fragment Comments on Chapter {
+          status
           comments {
             id
             text
@@ -80,25 +78,6 @@ const Story: NextPage<StoryProps> = ({ error, data }) => {
 
     const handleChange: ChangeEventHandler<HTMLTextAreaElement> = (e) => {
       setComment(e.target.value);
-    };
-
-    const handleDeleteChapter = async () => {
-      const sure = confirm(
-        "Are you sure you want to delete this story? This is irreversible."
-      );
-      if (sure) {
-        try {
-          await deleteChapter({ variables: { chapterId: data.getChapter.id } });
-          router.push("/dashboard");
-          toast("Story deleted.", {
-            toastId: data.getChapter.id,
-          });
-        } catch (err) {
-          toast((err as any).message, {
-            toastId: data.getChapter.id,
-          });
-        }
-      }
     };
 
     const handleAddComment = async () => {
@@ -194,33 +173,11 @@ const Story: NextPage<StoryProps> = ({ error, data }) => {
 
     return (
       <Box className="container is-max-desktop" padding="0 8px">
-        {/* OWNER ACTIONS */}
-        {isOwner && (
-          <Box textAlign="right" mt="1em" mb="1em">
-            <EditButton href={`/edit/${data.getChapter.id}`}>
-              <Button pill p="4px 8px">
-                <Box display="flex" alignItems="center">
-                  <Box mr="4px">Edit</Box> <FiEdit />
-                </Box>
-              </Button>
-            </EditButton>
-            <Button
-              pill
-              p="4px 8px"
-              ml="4px"
-              variant="danger"
-              onClick={handleDeleteChapter}
-            >
-              <Box display="flex" alignItems="center">
-                <Box mr="4px">Delete</Box> <RiDeleteBin5Fill />
-              </Box>
-            </Button>
-          </Box>
-        )}
-
+        <Box mb="1em" textAlign="right">
+          <Pill text={cacheData?.status || ""} />
+        </Box>
         {/* TITLE */}
         <PageTitle text={data.getChapter.title} />
-
         <Box marginBottom="2em" mt="1em" color={theme.colors.contrast_med}>
           <Text>{data.getChapter.description}</Text>
         </Box>
@@ -238,7 +195,15 @@ const Story: NextPage<StoryProps> = ({ error, data }) => {
           borderBottom={`1px solid ${theme.colors.bg_comp_1_light}`}
         >
           <ActionsBar
-            props={{ ...data.getChapter }}
+            props={{
+              ...data.getChapter,
+              showActions: {
+                readLater: user?.currentUser.id !== data.getChapter.authorId,
+                publish: true,
+                delete: true,
+                edit: true,
+              },
+            }}
             onCommentClick={() => toggleCommenting((prev) => !prev)}
           />
         </Box>
@@ -266,7 +231,7 @@ const Story: NextPage<StoryProps> = ({ error, data }) => {
 
         {/* COMMENTS */}
         <Box mt="1em" id="comments">
-          {commentsData?.comments?.map((comment) => (
+          {cacheData?.comments?.map((comment) => (
             <Box mb="1em" key={comment.id}>
               <Comment
                 data={{ ...comment }}

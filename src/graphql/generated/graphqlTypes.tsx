@@ -56,6 +56,7 @@ export type Chapter = {
   title: Scalars["String"];
   text: Scalars["String"];
   description: Scalars["String"];
+  status: Scalars["String"];
   chapterNumber: Scalars["Float"];
   likes: Scalars["Int"];
   dislikes: Scalars["Int"];
@@ -86,6 +87,12 @@ export type ChapterReactionResponse = {
   hasVoted: Scalars["Boolean"];
 };
 
+/** The status of the Tale */
+export enum ChapterStatus {
+  Published = "Published",
+  Draft = "Draft",
+}
+
 export type Comment = {
   __typename?: "Comment";
   id: Scalars["ID"];
@@ -107,6 +114,7 @@ export type Follow = {
 export type InputCreateChapter = {
   title: Scalars["String"];
   bookId?: Maybe<Scalars["String"]>;
+  status: Scalars["String"];
   text: Scalars["String"];
   description: Scalars["String"];
   tags?: Maybe<Array<InputTag>>;
@@ -170,6 +178,7 @@ export type Mutation = {
   updateChapter: Chapter;
   addChapterToBook: Chapter;
   deleteChapter: Chapter;
+  changeStatus: Chapter;
   createTags: Array<Tag>;
   deleteTag: Scalars["Boolean"];
   followUser: Follow;
@@ -220,6 +229,11 @@ export type MutationDeleteChapterArgs = {
   chapterId: Scalars["String"];
 };
 
+export type MutationChangeStatusArgs = {
+  id: Scalars["String"];
+  newStatus: ChapterStatus;
+};
+
 export type MutationCreateTagsArgs = {
   data: InputCreateTags;
 };
@@ -263,6 +277,12 @@ export type MutationSaveChapterToReadLaterArgs = {
   id: Scalars["String"];
 };
 
+export type PaginatedDrafts = {
+  __typename?: "PaginatedDrafts";
+  drafts: Array<Chapter>;
+  hasMore: Scalars["Boolean"];
+};
+
 export type PaginatedReadLater = {
   __typename?: "PaginatedReadLater";
   readLater: Array<ReadLater>;
@@ -293,6 +313,7 @@ export type Query = {
   getChaptersFromBook: Array<Chapter>;
   getChapter: Chapter;
   getChaptersFromUser: Array<Chapter>;
+  getDrafts: PaginatedDrafts;
   getAllSavedChapter: PaginatedReadLater;
   removeFromReadLater: ReadLater;
 };
@@ -329,6 +350,11 @@ export type QueryGetChapterArgs = {
 
 export type QueryGetChaptersFromUserArgs = {
   username: Scalars["String"];
+};
+
+export type QueryGetDraftsArgs = {
+  offset: Scalars["Float"];
+  take: Scalars["Float"];
 };
 
 export type QueryGetAllSavedChapterArgs = {
@@ -396,6 +422,7 @@ export type ChapterFragment = { __typename: "Chapter" } & Pick<
   | "text"
   | "description"
   | "likes"
+  | "status"
   | "dislikes"
   | "createdAt"
 > & {
@@ -469,6 +496,18 @@ export type GetChaptersFromUserQuery = { __typename?: "Query" } & {
   getChaptersFromUser: Array<{ __typename?: "Chapter" } & ChapterFragment>;
 };
 
+export type GetDraftsQueryVariables = Exact<{
+  take: Scalars["Float"];
+  offset: Scalars["Float"];
+}>;
+
+export type GetDraftsQuery = { __typename?: "Query" } & {
+  getDrafts: { __typename?: "PaginatedDrafts" } & Pick<
+    PaginatedDrafts,
+    "hasMore"
+  > & { drafts: Array<{ __typename?: "Chapter" } & ChapterFragment> };
+};
+
 export type GetTimelineTalesQueryVariables = Exact<{
   cursor?: Maybe<Scalars["String"]>;
   take: Scalars["Float"];
@@ -527,6 +566,7 @@ export const ChapterFragmentDoc = gql`
     text
     description
     likes
+    status
     dislikes
     createdAt
     author {
@@ -608,6 +648,21 @@ export const GetChaptersFromUserDocument = gql`
 export type GetChaptersFromUserQueryResult = Apollo.QueryResult<
   GetChaptersFromUserQuery,
   GetChaptersFromUserQueryVariables
+>;
+export const GetDraftsDocument = gql`
+  query GetDrafts($take: Float!, $offset: Float!) {
+    getDrafts(offset: $offset, take: $take) {
+      drafts {
+        ...Chapter
+      }
+      hasMore
+    }
+  }
+  ${ChapterFragmentDoc}
+`;
+export type GetDraftsQueryResult = Apollo.QueryResult<
+  GetDraftsQuery,
+  GetDraftsQueryVariables
 >;
 export const GetTimelineTalesDocument = gql`
   query GetTimelineTales($cursor: String, $take: Float!) {

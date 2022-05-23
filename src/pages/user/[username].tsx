@@ -18,7 +18,7 @@ type UserProps = ServerSideProps<GetUserQuery>;
 const Username: NextPage<UserProps> = (props) => {
   const [follow] = useFollowUserMutation();
   const [unfollow] = useUnfollowUserMutation();
-  const currentUser = useCurrentUser();
+  const { data } = useCurrentUser();
   const client = useApolloClient();
 
   const followData = client.readFragment<{
@@ -47,7 +47,7 @@ const Username: NextPage<UserProps> = (props) => {
                 return [
                   {
                     leaderId: props.data.getUser.id,
-                    followId: currentUser.data?.currentUser.id,
+                    followId: data?.currentUser.id,
                   },
                 ];
               },
@@ -85,6 +85,7 @@ const Username: NextPage<UserProps> = (props) => {
       toast((err as any).message, { toastId: props.data.getUser.id });
     }
   };
+  console.log(data?.currentUser.id);
 
   if (props.error) {
     return <div className="has-text-centered">{props.error}</div>;
@@ -97,13 +98,22 @@ const Username: NextPage<UserProps> = (props) => {
         handleUnfollow={handleUnfollow}
         currentUserAlreadyFollows={
           followData &&
-          followData.followers[0]?.followId === currentUser.data?.currentUser.id
+          followData.followers[0]?.followId === data?.currentUser.id
         }
       >
         <div className="columns is-multiline">
           {props.data.getUser.chapters.map((chapter) => (
             <div className="column is-6-tablet is-4-desktop" key={chapter.id}>
-              <StoryCard {...chapter} format="vertical" />
+              <StoryCard
+                {...chapter}
+                format="vertical"
+                showActions={{
+                  delete: data?.currentUser.id === chapter.authorId,
+                  edit: data?.currentUser.id === chapter.authorId,
+                  readLater: data?.currentUser.id !== chapter.authorId,
+                  publish: data?.currentUser.id === chapter.authorId,
+                }}
+              />
             </div>
           ))}
         </div>

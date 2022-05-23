@@ -3,7 +3,6 @@ import { IconContext } from "@react-icons/all-files";
 import { BiCommentAdd } from "@react-icons/all-files/bi/BiCommentAdd";
 import { TiThumbsDown } from "@react-icons/all-files/ti/TiThumbsDown";
 import { TiThumbsUp } from "@react-icons/all-files/ti/TiThumbsUp";
-import { HiDotsHorizontal } from "@react-icons/all-files/hi/HiDotsHorizontal";
 import { AiOutlineSave } from "@react-icons/all-files/ai/AiOutlineSave";
 import {
   ReactToChapterMutation,
@@ -18,6 +17,13 @@ import theme from "styles/theme";
 import { StoryCardProps } from "./StoryCard";
 import { DropdownMenu, DropdownMenuItem } from "components/ui/DropdownMenu";
 import { Box } from "components/ui/Box";
+import { ChapterStatus } from "graphql/generated/graphqlTypes";
+import { FiEdit } from "@react-icons/all-files/fi/FiEdit";
+import { MdArchive } from "@react-icons/all-files/md/MdArchive";
+import { MdPublish } from "@react-icons/all-files/md/MdPublish";
+import { RiDeleteBin5Fill } from "@react-icons/all-files/ri/RiDeleteBin5Fill";
+import router from "next/router";
+import { Api } from "lib/api";
 
 const updateCache = (
   cache: ApolloCache<ReactToChapterMutation>,
@@ -47,18 +53,26 @@ type ActionsBarProps = {
   onCommentClick?: () => void;
 };
 
+type ActionBarMenuItems = DropdownMenuItem & {
+  show?: boolean;
+};
+
 export const ActionsBar = ({ props, onCommentClick }: ActionsBarProps) => {
   const [reactToChapter] = useReactToChapterMutation();
   const [saveToLater] = useSaveToReadLaterMutation();
   const currentUser = useCurrentUser();
   const client = useApolloClient();
 
+  const deleteChapter = Api().deleteChapter();
+  const updateStatus = Api().updateStatus();
+
   // Read data from Apollo cache
-  const data = client.readFragment<{
+  const cachedData = client.readFragment<{
     id: string;
     likes: number;
     dislikes: number;
     reactions: { authorId: string; value: number }[];
+    status: ChapterStatus;
   }>({
     id: "Chapter:" + props?.id,
     fragment: gql`
@@ -67,22 +81,90 @@ export const ActionsBar = ({ props, onCommentClick }: ActionsBarProps) => {
         likes
         dislikes
         reactions
+        status
       }
     `,
   });
-
+  console.log(cachedData?.status, ChapterStatus.Published.toLowerCase());
   const userVote = useMemo(() => {
-    if (data?.reactions) {
+    if (cachedData?.reactions) {
       return {
         hasVoted:
-          currentUser.data?.currentUser.id === data?.reactions[0]?.authorId,
-        value: data?.reactions[0]?.value,
+          currentUser.data?.currentUser.id ===
+          cachedData?.reactions[0]?.authorId,
+        value: cachedData?.reactions[0]?.value,
       };
     }
     return {
       hasVoted: false,
     };
-  }, [data?.reactions, currentUser.data]);
+  }, [cachedData?.reactions, currentUser.data]);
+
+  const MenuItems: ActionBarMenuItems[] = useMemo(() => {
+    return [
+      {
+        label: "Read Later",
+        icon: <AiOutlineSave />,
+        text: "read later",
+        show: props.showActions.readLater,
+        onClick: async () => {
+          try {
+            await saveToLater({ variables: { id: props.id } });
+            toast(
+              <span>
+                Added <strong>{props.title}</strong> to read later.
+              </span>,
+              {
+                toastId: props.title,
+              }
+            );
+          } catch (err: any) {
+            toast(err.message, {
+              toastId: props.title,
+            });
+          }
+        },
+      },
+      {
+        label: "Edit",
+        text: "edit",
+        icon: <FiEdit />,
+        show: props.showActions.edit,
+        onClick: () => {
+          router.push(`/edit/${props.id}`);
+        },
+      },
+      ...[
+        cachedData?.status === ChapterStatus.Published.toLowerCase()
+          ? {
+              label: "Unpublish",
+              text: "draft",
+              icon: <MdArchive />,
+              show: props.showActions.publish,
+              onClick: () => updateStatus.run(ChapterStatus.Draft, props.id),
+            }
+          : {
+              label: "Publish",
+              text: "publish",
+              icon: <MdPublish />,
+              show: props.showActions.publish,
+              onClick: () =>
+                updateStatus.run(ChapterStatus.Published, props.id),
+            },
+      ],
+      {
+        type: "divider",
+        show: props.showActions.delete,
+      },
+      {
+        label: "Delete",
+        text: "delete",
+        icon: <RiDeleteBin5Fill />,
+        show: props.showActions.delete,
+        onClick: () => deleteChapter.run(props.id),
+      },
+    ];
+  }, [cachedData?.status, props.showActions]);
 
   const handleUpvote = async () => {
     try {
@@ -135,35 +217,6 @@ export const ActionsBar = ({ props, onCommentClick }: ActionsBarProps) => {
     return theme.colors.contrast_med;
   };
 
-  const MenuItems: DropdownMenuItem[] = [
-    {
-      label: (
-        <Box display="flex" alignItems="center">
-          <AiOutlineSave />
-          &nbsp; Read later
-        </Box>
-      ),
-      text: "read later",
-      onClick: async () => {
-        try {
-          await saveToLater({ variables: { id: props.id } });
-          toast(
-            <span>
-              Added <strong>{props.title}</strong> to read later.
-            </span>,
-            {
-              toastId: props.title,
-            }
-          );
-        } catch (err: any) {
-          toast(err.message, {
-            toastId: props.title,
-          });
-        }
-      },
-    },
-  ];
-
   return (
     <IconContext.Provider value={{ size: "24px" }}>
       <Wrapper>
@@ -173,7 +226,7 @@ export const ActionsBar = ({ props, onCommentClick }: ActionsBarProps) => {
 
         <ActionButton onClick={handleDownvote}>
           {userVote.value === -1 && (
-            <LikeNumber value={-1}>{data?.dislikes}</LikeNumber>
+            <LikeNumber value={-1}>{cachedData?.dislikes}</LikeNumber>
           )}
           <TiThumbsDown
             style={{
@@ -183,7 +236,7 @@ export const ActionsBar = ({ props, onCommentClick }: ActionsBarProps) => {
         </ActionButton>
         <ActionButton onClick={handleUpvote}>
           {userVote.value === 1 && (
-            <LikeNumber value={1}>{data?.likes}</LikeNumber>
+            <LikeNumber value={1}>{cachedData?.likes}</LikeNumber>
           )}
           <TiThumbsUp
             style={{
@@ -191,14 +244,9 @@ export const ActionsBar = ({ props, onCommentClick }: ActionsBarProps) => {
             }}
           />
         </ActionButton>
-        <DropdownMenu
-          data={MenuItems}
-          trigger={
-            <ActionButton>
-              <HiDotsHorizontal style={{ color: theme.colors.contrast_med }} />
-            </ActionButton>
-          }
-        />
+        {MenuItems.filter((item) => item.show).length > 0 && (
+          <DropdownMenu data={MenuItems.filter((item) => item.show)} />
+        )}
       </Wrapper>
     </IconContext.Provider>
   );

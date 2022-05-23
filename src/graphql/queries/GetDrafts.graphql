@@ -1,0 +1,8 @@
+query GetDrafts($take: Float!, $offset: Float!) {
+  getDrafts(offset: $offset, take: $take) {
+    drafts {
+      ...Chapter
+    }
+    hasMore
+  }
+}
