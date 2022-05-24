@@ -1,5 +1,5 @@
-query GetUser($username: String!) {
-  getUser(username: $username) {
+query GetUser($username: String, $findFromUserId: Boolean) {
+  getUser(username: $username, findFromUserId: $findFromUserId) {
     id
     name
     username
@@ -14,9 +14,6 @@ query GetUser($username: String!) {
       chapters
       followers
       following
-    }
-    chapters {
-      ...Chapter
     }
   }
 }

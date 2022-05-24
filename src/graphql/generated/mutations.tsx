@@ -278,6 +278,12 @@ export type MutationSaveChapterToReadLaterArgs = {
   id: Scalars["String"];
 };
 
+export type PaginatedChaptersFromUser = {
+  __typename?: "PaginatedChaptersFromUser";
+  chapters: Array<Chapter>;
+  hasMore: Scalars["Boolean"];
+};
+
 export type PaginatedDrafts = {
   __typename?: "PaginatedDrafts";
   drafts: Array<Chapter>;
@@ -313,14 +319,15 @@ export type Query = {
   getTimelineChapters: PaginatedTimelineChapters;
   getChaptersFromBook: Array<Chapter>;
   getChapter: Chapter;
-  getChaptersFromUser: Array<Chapter>;
+  getChaptersFromUser: PaginatedChaptersFromUser;
   getDrafts: PaginatedDrafts;
   getAllSavedChapter: PaginatedReadLater;
   removeFromReadLater: ReadLater;
 };
 
 export type QueryGetUserArgs = {
-  username: Scalars["String"];
+  findFromUserId?: Maybe<Scalars["Boolean"]>;
+  username?: Maybe<Scalars["String"]>;
 };
 
 export type QueryGetTimelineBooksArgs = {
@@ -350,6 +357,8 @@ export type QueryGetChapterArgs = {
 };
 
 export type QueryGetChaptersFromUserArgs = {
+  offset: Scalars["Float"];
+  take: Scalars["Float"];
   username: Scalars["String"];
 };
 

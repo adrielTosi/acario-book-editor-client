@@ -3,14 +3,20 @@ import { withApollo } from "apollo/withApollo";
 import { WithSidebar } from "components/Navigation/Sidebar";
 import { StoryCard } from "components/StoryCard/StoryCard";
 import { Box } from "components/ui/Box";
+import { Button } from "components/ui/Button";
 import { GetUserQuery } from "graphql/generated/graphqlTypes";
 import {
   useFollowUserMutation,
   useUnfollowUserMutation,
 } from "graphql/generated/mutations";
-import { ssrGetUser, useCurrentUser } from "graphql/generated/page";
+import {
+  ssrGetUser,
+  useCurrentUser,
+  useGetChaptersFromUser,
+} from "graphql/generated/page";
 import { GetServerSideProps, NextPage } from "next";
 import { toast } from "react-toastify";
+import theme from "styles/theme";
 import { ServerSideProps } from "types/ServerSideProps";
 
 type UserProps = ServerSideProps<GetUserQuery>;
@@ -19,6 +25,14 @@ const Username: NextPage<UserProps> = (props) => {
   const [follow] = useFollowUserMutation();
   const [unfollow] = useUnfollowUserMutation();
   const { data } = useCurrentUser();
+  const {
+    data: chapters,
+    loading,
+    error,
+    fetchMore,
+  } = useGetChaptersFromUser(() => ({
+    variables: { username: props.data.getUser.username, take: 2, offset: 0 },
+  }));
   const client = useApolloClient();
 
   const followData = client.readFragment<{
@@ -85,7 +99,15 @@ const Username: NextPage<UserProps> = (props) => {
       toast((err as any).message, { toastId: props.data.getUser.id });
     }
   };
-  console.log(data?.currentUser.id);
+
+  const handleFetchMore = async () => {
+    fetchMore({
+      variables: {
+        take: 2,
+        offset: chapters?.getChaptersFromUser.chapters.length,
+      },
+    });
+  };
 
   if (props.error) {
     return <div className="has-text-centered">{props.error}</div>;
@@ -102,7 +124,7 @@ const Username: NextPage<UserProps> = (props) => {
         }
       >
         <div className="columns is-multiline">
-          {props.data.getUser.chapters.map((chapter) => (
+          {chapters?.getChaptersFromUser.chapters.map((chapter) => (
             <div className="column is-6-tablet is-4-desktop" key={chapter.id}>
               <StoryCard
                 {...chapter}
@@ -117,6 +139,18 @@ const Username: NextPage<UserProps> = (props) => {
             </div>
           ))}
         </div>
+
+        {chapters?.getChaptersFromUser.hasMore && (
+          <Box
+            textAlign="center"
+            borderTop={`1px solid ${theme.colors.comp_outline}`}
+            pt="1em"
+          >
+            <Button onClick={handleFetchMore} lined>
+              More...
+            </Button>
+          </Box>
+        )}
       </WithSidebar>
     </Box>
   );

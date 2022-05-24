@@ -47,7 +47,7 @@ export const DropdownMenu = ({ trigger, data }: DropdownMenuProps) => {
         <Content className="dropdown-content">
           {data.map((item) => {
             if (item.type === "divider") {
-              return <Divider className="dropdown-divider" />;
+              return <Divider className="dropdown-divider" key="divider" />;
             } else {
               return (
                 <ItemButton

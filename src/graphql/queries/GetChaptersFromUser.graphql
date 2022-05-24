@@ -1,5 +1,8 @@
-query getChaptersFromUser($username: String!) {
-  getChaptersFromUser(username: $username) {
-    ...Chapter
+query getChaptersFromUser($username: String!, $take: Float!, $offset: Float!) {
+  getChaptersFromUser(username: $username, take: $take, offset: $offset) {
+    chapters {
+      ...Chapter
+    }
+    hasMore
   }
 }
