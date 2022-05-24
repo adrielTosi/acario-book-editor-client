@@ -11,7 +11,9 @@ export type ActionBarShow = {
 
 export type StoryCardProps = ChapterFragment & {
   format: "vertical" | "horizontal";
-  // isOwner: boolean;
+  /**
+   * Choose which options to appear inside the three dots menu
+   */
   showActions: ActionBarShow;
 };
 

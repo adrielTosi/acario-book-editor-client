@@ -24,6 +24,7 @@ import { MdPublish } from "@react-icons/all-files/md/MdPublish";
 import { RiDeleteBin5Fill } from "@react-icons/all-files/ri/RiDeleteBin5Fill";
 import router from "next/router";
 import { Api } from "lib/api";
+import { Pill } from "components/ui/Pill";
 
 const updateCache = (
   cache: ApolloCache<ReactToChapterMutation>,
@@ -85,7 +86,7 @@ export const ActionsBar = ({ props, onCommentClick }: ActionsBarProps) => {
       }
     `,
   });
-  console.log(cachedData?.status, ChapterStatus.Published.toLowerCase());
+
   const userVote = useMemo(() => {
     if (cachedData?.reactions) {
       return {
@@ -220,33 +221,40 @@ export const ActionsBar = ({ props, onCommentClick }: ActionsBarProps) => {
   return (
     <IconContext.Provider value={{ size: "24px" }}>
       <Wrapper>
-        <ActionButton onClick={onCommentClick}>
-          <BiCommentAdd style={{ color: theme.colors.contrast_med }} />
-        </ActionButton>
+        <Box>
+          {currentUser.data?.currentUser.id === props.authorId && (
+            <Pill text={cachedData?.status || ""} />
+          )}
+        </Box>
+        <Box>
+          <ActionButton onClick={onCommentClick}>
+            <BiCommentAdd style={{ color: theme.colors.contrast_med }} />
+          </ActionButton>
 
-        <ActionButton onClick={handleDownvote}>
-          {userVote.value === -1 && (
-            <LikeNumber value={-1}>{cachedData?.dislikes}</LikeNumber>
+          <ActionButton onClick={handleDownvote}>
+            {userVote.value === -1 && (
+              <LikeNumber value={-1}>{cachedData?.dislikes}</LikeNumber>
+            )}
+            <TiThumbsDown
+              style={{
+                color: handleColor(userVote.hasVoted && userVote.value === -1),
+              }}
+            />
+          </ActionButton>
+          <ActionButton onClick={handleUpvote}>
+            {userVote.value === 1 && (
+              <LikeNumber value={1}>{cachedData?.likes}</LikeNumber>
+            )}
+            <TiThumbsUp
+              style={{
+                color: handleColor(userVote.hasVoted && userVote.value === 1),
+              }}
+            />
+          </ActionButton>
+          {MenuItems.filter((item) => item.show).length > 0 && (
+            <DropdownMenu data={MenuItems.filter((item) => item.show)} />
           )}
-          <TiThumbsDown
-            style={{
-              color: handleColor(userVote.hasVoted && userVote.value === -1),
-            }}
-          />
-        </ActionButton>
-        <ActionButton onClick={handleUpvote}>
-          {userVote.value === 1 && (
-            <LikeNumber value={1}>{cachedData?.likes}</LikeNumber>
-          )}
-          <TiThumbsUp
-            style={{
-              color: handleColor(userVote.hasVoted && userVote.value === 1),
-            }}
-          />
-        </ActionButton>
-        {MenuItems.filter((item) => item.show).length > 0 && (
-          <DropdownMenu data={MenuItems.filter((item) => item.show)} />
-        )}
+        </Box>
       </Wrapper>
     </IconContext.Provider>
   );
@@ -254,7 +262,8 @@ export const ActionsBar = ({ props, onCommentClick }: ActionsBarProps) => {
 
 const Wrapper = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 export const AButtonStyles = css`

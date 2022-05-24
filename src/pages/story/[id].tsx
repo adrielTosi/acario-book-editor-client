@@ -56,7 +56,7 @@ const Story: NextPage<StoryProps> = ({ error, data }) => {
     }>({
       id: "Chapter:" + data.getChapter.id,
       fragment: gql`
-        fragment Comments on Chapter {
+        fragment ____ on Chapter {
           status
           comments {
             id
@@ -173,9 +173,6 @@ const Story: NextPage<StoryProps> = ({ error, data }) => {
 
     return (
       <Box className="container is-max-desktop" padding="0 8px">
-        <Box mb="1em" textAlign="right">
-          <Pill text={cacheData?.status || ""} />
-        </Box>
         {/* TITLE */}
         <PageTitle text={data.getChapter.title} />
         <Box marginBottom="2em" mt="1em" color={theme.colors.contrast_med}>
