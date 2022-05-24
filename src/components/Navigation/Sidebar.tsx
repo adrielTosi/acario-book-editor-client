@@ -12,6 +12,7 @@ import { Button } from "../ui/Button";
 import { Pill } from "../ui/Pill";
 import { AiOutlineSave } from "@react-icons/all-files/ai/AiOutlineSave";
 import { RiDraftLine } from "@react-icons/all-files/ri/RiDraftLine";
+import { AiOutlinePlusCircle } from "@react-icons/all-files/ai/AiOutlinePlusCircle";
 import { SidebarItem } from "./SidebarItem";
 
 export type SidebarProps = {
@@ -96,6 +97,11 @@ export const Sidebar = ({
 
       {isDashboard && (
         <>
+          <SidebarItem
+            text="New Tale"
+            icon={<AiOutlinePlusCircle size="24px" />}
+            link="/create"
+          />
           <SidebarItem
             text="Read Later"
             icon={<AiOutlineSave size="24px" />}

@@ -45,7 +45,7 @@ const Create = () => {
             },
           },
         });
-        router.push("/dashboard");
+        router.push(`/story/${chap.data?.createChapter.id}`);
         toast(`Create new Story: "${chap.data?.createChapter.title}"`, {
           toastId: "story-created",
         });

@@ -75,21 +75,9 @@ export default withApollo(Dashboard);
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
-    // IS THIS CALL NECESSARY? PROBABLY NOT -- maybe better make an optional id search in the backend
-    const user = await ssrCurrentUser.getServerPage(
-      {
-        notifyOnNetworkStatusChange: true,
-        context: {
-          headers: {
-            cookie: context.req.headers.cookie,
-          },
-        },
-      },
-      context
-    );
     const res = await ssrGetUser.getServerPage(
       {
-        variables: { username: user.props.data.currentUser.username },
+        variables: { findFromUserId: true },
         notifyOnNetworkStatusChange: true,
         context: {
           headers: {
