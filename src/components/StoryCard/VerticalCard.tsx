@@ -2,6 +2,7 @@ import { UserMedia } from "components/Profile/UserMedia";
 import { H4Link } from "components/typography/Heading";
 import { Text } from "components/typography/Text";
 import { Box } from "components/ui/Box";
+import { Pill } from "components/ui/Pill";
 import { useAvatar } from "lib/hooks/useAvatar";
 import router from "next/router";
 import styled from "styled-components";
@@ -52,6 +53,13 @@ export const VerticalFormat = (props: StoryCardProps) => {
             username={props.author.username}
             size="small"
           />
+          <Box mt="8px" display="flex">
+            {props.tags?.map((tag) => (
+              <Box mr="2px" flexShrink={0}>
+                <Pill text={tag.label} />
+              </Box>
+            ))}
+          </Box>
         </Details>
       </DescriptionWrapper>
       <ActionsBar
@@ -100,7 +108,4 @@ const Description = styled.div`
 const Details = styled.div`
   border-top: ${(props) => `1px solid ${props.theme.colors.comp_outline}`};
   padding: 1em;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 `;

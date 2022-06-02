@@ -90,8 +90,8 @@ export type ChapterReactionResponse = {
 
 /** The status of the Tale */
 export enum ChapterStatus {
-  Published = "Published",
-  Draft = "Draft",
+  Published = "PUBLISHED",
+  Draft = "DRAFT",
 }
 
 export type Comment = {
@@ -158,6 +158,7 @@ export type InputUpdateChapter = {
   title?: Maybe<Scalars["String"]>;
   text?: Maybe<Scalars["String"]>;
   description?: Maybe<Scalars["String"]>;
+  tags?: Maybe<Array<InputTag>>;
 };
 
 export type InputUpdateProfile = {
@@ -177,9 +178,9 @@ export type Mutation = {
   deleteBook: Scalars["Boolean"];
   createChapter: Chapter;
   updateChapter: Chapter;
-  addChapterToBook: Chapter;
   deleteChapter: Chapter;
   changeStatus: Chapter;
+  addChapterToBook: Chapter;
   createTags: Array<Tag>;
   deleteTag: Scalars["Boolean"];
   followUser: Follow;
@@ -221,11 +222,6 @@ export type MutationUpdateChapterArgs = {
   chapterData: InputUpdateChapter;
 };
 
-export type MutationAddChapterToBookArgs = {
-  bookId: Scalars["String"];
-  chapterId: Scalars["String"];
-};
-
 export type MutationDeleteChapterArgs = {
   chapterId: Scalars["String"];
 };
@@ -233,6 +229,11 @@ export type MutationDeleteChapterArgs = {
 export type MutationChangeStatusArgs = {
   id: Scalars["String"];
   newStatus: ChapterStatus;
+};
+
+export type MutationAddChapterToBookArgs = {
+  bookId: Scalars["String"];
+  chapterId: Scalars["String"];
 };
 
 export type MutationCreateTagsArgs = {
@@ -317,10 +318,10 @@ export type Query = {
   getBook: Book;
   getBooks: Array<Book>;
   getTimelineChapters: PaginatedTimelineChapters;
-  getChaptersFromBook: Array<Chapter>;
   getChapter: Chapter;
   getChaptersFromUser: PaginatedChaptersFromUser;
   getDrafts: PaginatedDrafts;
+  getChaptersFromBook: Array<Chapter>;
   getAllSavedChapter: PaginatedReadLater;
   removeFromReadLater: ReadLater;
 };
@@ -348,10 +349,6 @@ export type QueryGetTimelineChaptersArgs = {
   take: Scalars["Float"];
 };
 
-export type QueryGetChaptersFromBookArgs = {
-  bookId: Scalars["String"];
-};
-
 export type QueryGetChapterArgs = {
   chapterId: Scalars["String"];
 };
@@ -365,6 +362,10 @@ export type QueryGetChaptersFromUserArgs = {
 export type QueryGetDraftsArgs = {
   offset: Scalars["Float"];
   take: Scalars["Float"];
+};
+
+export type QueryGetChaptersFromBookArgs = {
+  bookId: Scalars["String"];
 };
 
 export type QueryGetAllSavedChapterArgs = {
@@ -445,6 +446,14 @@ export type ChapterFragment = { __typename: "Chapter" } & Pick<
         { __typename?: "ChapterReaction" } & Pick<
           ChapterReaction,
           "authorId" | "value"
+        >
+      >
+    >;
+    tags?: Maybe<
+      Array<
+        { __typename?: "Tag" } & Pick<
+          Tag,
+          "id" | "label" | "value" | "createdAt"
         >
       >
     >;
@@ -660,6 +669,12 @@ export const ChapterFragmentDoc = gql`
     reactions {
       authorId
       value
+    }
+    tags {
+      id
+      label
+      value
+      createdAt
     }
     comments {
       ...Comment

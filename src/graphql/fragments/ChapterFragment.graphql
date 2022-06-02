@@ -20,6 +20,12 @@ fragment Chapter on Chapter {
     authorId
     value
   }
+  tags {
+    id
+    label
+    value
+    createdAt
+  }
   comments {
     ...Comment
   }
