@@ -3,7 +3,7 @@ import { useCurrentUser } from "graphql/generated/page";
 import Link from "next/link";
 import styled from "styled-components";
 import theme from "styles/theme";
-import logo from "../../images/Logo.png";
+import logo from "../../assets/Logo.png";
 import { H6Link } from "../typography/Heading";
 import { Text } from "../typography/Text";
 import { AppLink } from "../ui/AppLink";

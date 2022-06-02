@@ -2,6 +2,7 @@ import { UserMedia } from "components/Profile/UserMedia";
 import { H4Link } from "components/typography/Heading";
 import { Text } from "components/typography/Text";
 import { Box } from "components/ui/Box";
+import { Pill } from "components/ui/Pill";
 import { useAvatar } from "lib/hooks/useAvatar";
 import router from "next/router";
 import styled from "styled-components";
@@ -52,6 +53,13 @@ export const HorizontalCard = (props: StoryCardProps) => {
                 <Text color={theme.colors.contrast_low} size="small">
                   {publishedDate}
                 </Text>
+                <Box mt="8px" display="flex">
+                  {props.tags?.map((tag) => (
+                    <Box mr="2px" flexShrink={0}>
+                      <Pill text={tag.label} />
+                    </Box>
+                  ))}
+                </Box>
               </Box>
             </Box>
           </Bordered>

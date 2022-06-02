@@ -20,6 +20,7 @@ import {
   useEditCommentMutation,
 } from "graphql/generated/mutations";
 import { ssrGetChapter, useCurrentUser } from "graphql/generated/page";
+import { argsToArgsConfig } from "graphql/type/definition";
 import { useTipTap } from "lib/hooks/UseTipTap";
 import { GetServerSideProps, NextPage } from "next";
 import Link from "next/link";
@@ -178,6 +179,9 @@ const Story: NextPage<StoryProps> = ({ error, data }) => {
         <Box marginBottom="2em" mt="1em" color={theme.colors.contrast_med}>
           <Text>{data.getChapter.description}</Text>
         </Box>
+        {data.getChapter.tags?.map((tag) => (
+          <Pill text={tag.label} />
+        ))}
 
         {/* TEXT */}
 

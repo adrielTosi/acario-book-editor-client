@@ -1,4 +1,4 @@
-import { Field, FieldAttributes } from "formik";
+import { FastField, FieldAttributes } from "formik";
 import styled, { css } from "styled-components";
 
 export type StyledFieldProps = FieldAttributes<any> & {
@@ -25,7 +25,7 @@ export const AppFieldStyles = css`
   resize: vertical;
 `;
 
-const AppField = styled(Field)`
+const AppField = styled(FastField)`
   ${AppFieldStyles}
   ${(props) => {
     if (props.as === "textarea") {
