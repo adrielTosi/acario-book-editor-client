@@ -1,4 +1,4 @@
-mutation DeleteChapter($chapterId: String!) {
+mutation DeleteChapter($chapterId: Float!) {
   deleteChapter(chapterId: $chapterId) {
     id
   }

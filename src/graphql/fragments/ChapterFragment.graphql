@@ -21,10 +21,13 @@ fragment Chapter on Chapter {
     value
   }
   tags {
-    id
-    label
-    value
-    createdAt
+    tagId
+    chapterId
+    tag {
+      id
+      label
+      value
+    }
   }
   comments {
     ...Comment

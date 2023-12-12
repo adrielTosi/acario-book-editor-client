@@ -20,10 +20,10 @@ export type Scalars = {
 
 export type Book = {
   __typename?: "Book";
-  id: Scalars["String"];
+  id: Scalars["Float"];
   title: Scalars["String"];
   description: Scalars["String"];
-  authorId: Scalars["String"];
+  authorId: Scalars["Float"];
   author: User;
   likes: Scalars["Int"];
   dislikes: Scalars["Int"];
@@ -38,7 +38,7 @@ export type Book = {
 export type BookReaction = {
   __typename?: "BookReaction";
   author: User;
-  authorId: Scalars["String"];
+  authorId: Scalars["Float"];
   value: Scalars["Int"];
   book: Book;
   bookId: Scalars["String"];
@@ -53,7 +53,7 @@ export type BookReactionResponse = {
 
 export type Chapter = {
   __typename?: "Chapter";
-  id: Scalars["String"];
+  id: Scalars["Float"];
   title: Scalars["String"];
   text: Scalars["String"];
   description: Scalars["String"];
@@ -61,13 +61,13 @@ export type Chapter = {
   chapterNumber: Scalars["Float"];
   likes: Scalars["Int"];
   dislikes: Scalars["Int"];
-  authorId: Scalars["String"];
+  authorId: Scalars["Float"];
   author: User;
   bookId?: Maybe<Scalars["String"]>;
   book?: Maybe<Book>;
   comments?: Maybe<Array<Comment>>;
   reactions?: Maybe<Array<ChapterReaction>>;
-  tags?: Maybe<Array<Tag>>;
+  tags?: Maybe<Array<TagsOnChapters>>;
   createdAt: Scalars["String"];
   updatedAt: Scalars["String"];
 };
@@ -75,10 +75,10 @@ export type Chapter = {
 export type ChapterReaction = {
   __typename?: "ChapterReaction";
   author: User;
-  authorId: Scalars["String"];
+  authorId: Scalars["Float"];
   value: Scalars["Int"];
   chapter: Chapter;
-  chapterId: Scalars["String"];
+  chapterId: Scalars["Float"];
 };
 
 export type ChapterReactionResponse = {
@@ -99,7 +99,7 @@ export type Comment = {
   id: Scalars["ID"];
   text: Scalars["String"];
   author: User;
-  authorId: Scalars["String"];
+  authorId: Scalars["Float"];
   bookId?: Maybe<Scalars["String"]>;
   chapterId?: Maybe<Scalars["String"]>;
   createdAt: Scalars["String"];
@@ -114,7 +114,7 @@ export type Follow = {
 
 export type InputCreateChapter = {
   title: Scalars["String"];
-  bookId?: Maybe<Scalars["String"]>;
+  bookId?: Maybe<Scalars["Int"]>;
   status: Scalars["String"];
   text: Scalars["String"];
   description: Scalars["String"];
@@ -123,14 +123,8 @@ export type InputCreateChapter = {
 
 export type InputCreateComment = {
   text: Scalars["String"];
-  bookId?: Maybe<Scalars["String"]>;
-  chapterId?: Maybe<Scalars["String"]>;
-};
-
-export type InputCreateTags = {
-  tags: Array<InputTag>;
-  bookId?: Maybe<Scalars["String"]>;
-  chapterId?: Maybe<Scalars["String"]>;
+  bookId?: Maybe<Scalars["Int"]>;
+  chapterId?: Maybe<Scalars["Int"]>;
 };
 
 /** Data for creating new user */
@@ -153,8 +147,8 @@ export type InputTag = {
 };
 
 export type InputUpdateChapter = {
-  bookId?: Maybe<Scalars["String"]>;
-  chapterId: Scalars["String"];
+  bookId?: Maybe<Scalars["Float"]>;
+  chapterId: Scalars["Float"];
   title?: Maybe<Scalars["String"]>;
   text?: Maybe<Scalars["String"]>;
   description?: Maybe<Scalars["String"]>;
@@ -181,8 +175,6 @@ export type Mutation = {
   deleteChapter: Chapter;
   changeStatus: Chapter;
   addChapterToBook: Chapter;
-  createTags: Array<Tag>;
-  deleteTag: Scalars["Boolean"];
   followUser: Follow;
   unfollowUser: Follow;
   createComment: Comment;
@@ -211,7 +203,7 @@ export type MutationCreateBookArgs = {
 };
 
 export type MutationDeleteBookArgs = {
-  bookId: Scalars["String"];
+  bookId: Scalars["Float"];
 };
 
 export type MutationCreateChapterArgs = {
@@ -223,33 +215,25 @@ export type MutationUpdateChapterArgs = {
 };
 
 export type MutationDeleteChapterArgs = {
-  chapterId: Scalars["String"];
+  chapterId: Scalars["Float"];
 };
 
 export type MutationChangeStatusArgs = {
-  id: Scalars["String"];
+  id: Scalars["Float"];
   newStatus: ChapterStatus;
 };
 
 export type MutationAddChapterToBookArgs = {
-  bookId: Scalars["String"];
-  chapterId: Scalars["String"];
-};
-
-export type MutationCreateTagsArgs = {
-  data: InputCreateTags;
-};
-
-export type MutationDeleteTagArgs = {
-  id: Scalars["String"];
+  bookId: Scalars["Float"];
+  chapterId: Scalars["Float"];
 };
 
 export type MutationFollowUserArgs = {
-  id: Scalars["String"];
+  id: Scalars["Float"];
 };
 
 export type MutationUnfollowUserArgs = {
-  id: Scalars["String"];
+  id: Scalars["Float"];
 };
 
 export type MutationCreateCommentArgs = {
@@ -258,25 +242,25 @@ export type MutationCreateCommentArgs = {
 
 export type MutationUpdateCommentArgs = {
   text: Scalars["String"];
-  id: Scalars["String"];
+  id: Scalars["Float"];
 };
 
 export type MutationDeleteCommentArgs = {
-  id: Scalars["String"];
+  id: Scalars["Float"];
 };
 
 export type MutationReactToBookArgs = {
   value: Scalars["Float"];
-  id: Scalars["String"];
+  id: Scalars["Float"];
 };
 
 export type MutationReactToChapterArgs = {
   value: Scalars["Float"];
-  id: Scalars["String"];
+  id: Scalars["Float"];
 };
 
 export type MutationSaveChapterToReadLaterArgs = {
-  id: Scalars["String"];
+  id: Scalars["Float"];
 };
 
 export type PaginatedChaptersFromUser = {
@@ -337,11 +321,11 @@ export type QueryGetTimelineBooksArgs = {
 };
 
 export type QueryGetBookArgs = {
-  bookId: Scalars["String"];
+  bookId: Scalars["Float"];
 };
 
 export type QueryGetBooksArgs = {
-  userId?: Maybe<Scalars["String"]>;
+  userId?: Maybe<Scalars["Float"]>;
 };
 
 export type QueryGetTimelineChaptersArgs = {
@@ -350,7 +334,7 @@ export type QueryGetTimelineChaptersArgs = {
 };
 
 export type QueryGetChapterArgs = {
-  chapterId: Scalars["String"];
+  chapterId: Scalars["Float"];
 };
 
 export type QueryGetChaptersFromUserArgs = {
@@ -365,7 +349,7 @@ export type QueryGetDraftsArgs = {
 };
 
 export type QueryGetChaptersFromBookArgs = {
-  bookId: Scalars["String"];
+  bookId: Scalars["Float"];
 };
 
 export type QueryGetAllSavedChapterArgs = {
@@ -374,26 +358,32 @@ export type QueryGetAllSavedChapterArgs = {
 };
 
 export type QueryRemoveFromReadLaterArgs = {
-  id: Scalars["String"];
+  id: Scalars["Float"];
 };
 
 export type ReadLater = {
   __typename?: "ReadLater";
   author: User;
-  authorId: Scalars["String"];
+  authorId: Scalars["Float"];
   chapter: Chapter;
-  chapterId: Scalars["String"];
+  chapterId: Scalars["Float"];
   createdAt: Scalars["String"];
 };
 
 export type Tag = {
   __typename?: "Tag";
-  id: Scalars["String"];
+  id: Scalars["Float"];
   label: Scalars["String"];
   value: Scalars["String"];
-  bookId?: Maybe<Scalars["String"]>;
-  chapterId?: Maybe<Scalars["String"]>;
-  createdAt: Scalars["String"];
+  chapters: Array<Chapter>;
+};
+
+export type TagsOnChapters = {
+  __typename?: "TagsOnChapters";
+  tagId: Scalars["ID"];
+  chapterId: Scalars["ID"];
+  tag?: Maybe<Tag>;
+  chapter?: Maybe<Chapter>;
 };
 
 export type User = {
@@ -451,10 +441,14 @@ export type ChapterFragment = { __typename: "Chapter" } & Pick<
     >;
     tags?: Maybe<
       Array<
-        { __typename?: "Tag" } & Pick<
-          Tag,
-          "id" | "label" | "value" | "createdAt"
-        >
+        { __typename?: "TagsOnChapters" } & Pick<
+          TagsOnChapters,
+          "tagId" | "chapterId"
+        > & {
+            tag?: Maybe<
+              { __typename?: "Tag" } & Pick<Tag, "id" | "label" | "value">
+            >;
+          }
       >
     >;
     comments?: Maybe<Array<{ __typename?: "Comment" } & CommentFragment>>;
@@ -500,7 +494,7 @@ export type CreateCommentMutation = { __typename?: "Mutation" } & {
 };
 
 export type DeleteChapterMutationVariables = Exact<{
-  chapterId: Scalars["String"];
+  chapterId: Scalars["Float"];
 }>;
 
 export type DeleteChapterMutation = { __typename?: "Mutation" } & {
@@ -508,7 +502,7 @@ export type DeleteChapterMutation = { __typename?: "Mutation" } & {
 };
 
 export type DeleteCommentMutationVariables = Exact<{
-  id: Scalars["String"];
+  id: Scalars["Float"];
 }>;
 
 export type DeleteCommentMutation = { __typename?: "Mutation" } & {
@@ -516,7 +510,7 @@ export type DeleteCommentMutation = { __typename?: "Mutation" } & {
 };
 
 export type EditCommentMutationVariables = Exact<{
-  id: Scalars["String"];
+  id: Scalars["Float"];
   text: Scalars["String"];
 }>;
 
@@ -525,7 +519,7 @@ export type EditCommentMutation = { __typename?: "Mutation" } & {
 };
 
 export type FollowUserMutationVariables = Exact<{
-  id: Scalars["String"];
+  id: Scalars["Float"];
 }>;
 
 export type FollowUserMutation = { __typename?: "Mutation" } & {
@@ -550,7 +544,7 @@ export type LogoutMutation = { __typename?: "Mutation" } & Pick<
 
 export type ReactToChapterMutationVariables = Exact<{
   value: Scalars["Float"];
-  id: Scalars["String"];
+  id: Scalars["Float"];
 }>;
 
 export type ReactToChapterMutation = { __typename?: "Mutation" } & {
@@ -572,7 +566,7 @@ export type RegisterMutation = { __typename?: "Mutation" } & {
 };
 
 export type SaveToReadLaterMutationVariables = Exact<{
-  id: Scalars["String"];
+  id: Scalars["Float"];
 }>;
 
 export type SaveToReadLaterMutation = { __typename?: "Mutation" } & {
@@ -583,7 +577,7 @@ export type SaveToReadLaterMutation = { __typename?: "Mutation" } & {
 };
 
 export type UnfollowUserMutationVariables = Exact<{
-  id: Scalars["String"];
+  id: Scalars["Float"];
 }>;
 
 export type UnfollowUserMutation = { __typename?: "Mutation" } & {
@@ -622,7 +616,7 @@ export type UpdateProfileMutation = { __typename?: "Mutation" } & {
 };
 
 export type UpdateStatusMutationVariables = Exact<{
-  id: Scalars["String"];
+  id: Scalars["Float"];
   newStatus: ChapterStatus;
 }>;
 
@@ -671,10 +665,13 @@ export const ChapterFragmentDoc = gql`
       value
     }
     tags {
-      id
-      label
-      value
-      createdAt
+      tagId
+      chapterId
+      tag {
+        id
+        label
+        value
+      }
     }
     comments {
       ...Comment
@@ -804,7 +801,7 @@ export type CreateCommentMutationOptions = Apollo.BaseMutationOptions<
   CreateCommentMutationVariables
 >;
 export const DeleteChapterDocument = gql`
-  mutation DeleteChapter($chapterId: String!) {
+  mutation DeleteChapter($chapterId: Float!) {
     deleteChapter(chapterId: $chapterId) {
       id
     }
@@ -854,7 +851,7 @@ export type DeleteChapterMutationOptions = Apollo.BaseMutationOptions<
   DeleteChapterMutationVariables
 >;
 export const DeleteCommentDocument = gql`
-  mutation DeleteComment($id: String!) {
+  mutation DeleteComment($id: Float!) {
     deleteComment(id: $id) {
       ...Comment
     }
@@ -905,7 +902,7 @@ export type DeleteCommentMutationOptions = Apollo.BaseMutationOptions<
   DeleteCommentMutationVariables
 >;
 export const EditCommentDocument = gql`
-  mutation EditComment($id: String!, $text: String!) {
+  mutation EditComment($id: Float!, $text: String!) {
     updateComment(id: $id, text: $text) {
       ...Comment
     }
@@ -957,7 +954,7 @@ export type EditCommentMutationOptions = Apollo.BaseMutationOptions<
   EditCommentMutationVariables
 >;
 export const FollowUserDocument = gql`
-  mutation FollowUser($id: String!) {
+  mutation FollowUser($id: Float!) {
     followUser(id: $id) {
       leaderId
       followId
@@ -1101,7 +1098,7 @@ export type LogoutMutationOptions = Apollo.BaseMutationOptions<
   LogoutMutationVariables
 >;
 export const ReactToChapterDocument = gql`
-  mutation ReactToChapter($value: Float!, $id: String!) {
+  mutation ReactToChapter($value: Float!, $id: Float!) {
     reactToChapter(value: $value, id: $id) {
       chapter {
         ...Chapter
@@ -1219,7 +1216,7 @@ export type RegisterMutationOptions = Apollo.BaseMutationOptions<
   RegisterMutationVariables
 >;
 export const SaveToReadLaterDocument = gql`
-  mutation SaveToReadLater($id: String!) {
+  mutation SaveToReadLater($id: Float!) {
     saveChapterToReadLater(id: $id) {
       createdAt
       chapter {
@@ -1273,7 +1270,7 @@ export type SaveToReadLaterMutationOptions = Apollo.BaseMutationOptions<
   SaveToReadLaterMutationVariables
 >;
 export const UnfollowUserDocument = gql`
-  mutation UnfollowUser($id: String!) {
+  mutation UnfollowUser($id: Float!) {
     unfollowUser(id: $id) {
       leaderId
       followId
@@ -1443,7 +1440,7 @@ export type UpdateProfileMutationOptions = Apollo.BaseMutationOptions<
   UpdateProfileMutationVariables
 >;
 export const UpdateStatusDocument = gql`
-  mutation UpdateStatus($id: String!, $newStatus: ChapterStatus!) {
+  mutation UpdateStatus($id: Float!, $newStatus: ChapterStatus!) {
     changeStatus(id: $id, newStatus: $newStatus) {
       ...Chapter
     }

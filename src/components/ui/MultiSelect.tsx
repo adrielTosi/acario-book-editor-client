@@ -13,6 +13,7 @@ export type MultiSelectProps = {
   name: string;
   allowCreate?: boolean;
   onChange: Props["onChange"];
+  values?: MultiSelectOptions[];
 };
 
 const customStyles: Props["styles"] = {
@@ -81,6 +82,7 @@ const MultiSelectComponent = ({
   name,
   allowCreate,
   onChange,
+  values,
 }: MultiSelectProps) => {
   if (allowCreate) {
     return (
@@ -92,6 +94,7 @@ const MultiSelectComponent = ({
         filterOption={createFilter({ ignoreAccents: false })}
         components={{ Option: Option }}
         onChange={onChange}
+        value={values}
       />
     );
   }
@@ -103,6 +106,7 @@ const MultiSelectComponent = ({
       styles={customStyles}
       filterOption={createFilter({ ignoreAccents: false })}
       components={{ Option: Option }}
+      value={values}
     />
   );
 };

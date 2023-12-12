@@ -54,11 +54,14 @@ export const VerticalFormat = (props: StoryCardProps) => {
             size="small"
           />
           <Box mt="8px" display="flex">
-            {props.tags?.map((tag) => (
-              <Box mr="2px" flexShrink={0}>
-                <Pill text={tag.label} />
-              </Box>
-            ))}
+            {props.tags?.map(
+              (tag) =>
+                tag.tag?.label && (
+                  <Box mr="2px" flexShrink={0} key={tag.tag?.value}>
+                    <Pill text={tag.tag?.label} />
+                  </Box>
+                )
+            )}
           </Box>
         </Details>
       </DescriptionWrapper>

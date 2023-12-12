@@ -1,4 +1,4 @@
-mutation FollowUser($id: String!) {
+mutation FollowUser($id: Float!) {
   followUser(id: $id) {
     leaderId
     followId

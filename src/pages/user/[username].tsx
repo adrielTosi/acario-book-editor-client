@@ -52,7 +52,7 @@ const Username: NextPage<UserProps> = (props) => {
   const handleFollow = async () => {
     try {
       await follow({
-        variables: { id: props.data.getUser.id },
+        variables: { id: parseInt(props.data.getUser.id) },
         update(cache) {
           cache.modify({
             id: "User:" + props.data.getUser.id,
@@ -80,7 +80,7 @@ const Username: NextPage<UserProps> = (props) => {
   const handleUnfollow = () => {
     try {
       unfollow({
-        variables: { id: props.data.getUser.id },
+        variables: { id: parseInt(props.data.getUser.id) },
         update(cache) {
           cache.modify({
             id: "User:" + props.data.getUser.id,
@@ -130,10 +130,14 @@ const Username: NextPage<UserProps> = (props) => {
                 {...chapter}
                 format="vertical"
                 showActions={{
-                  delete: data?.currentUser.id === chapter.authorId,
-                  edit: data?.currentUser.id === chapter.authorId,
-                  readLater: data?.currentUser.id !== chapter.authorId,
-                  publish: data?.currentUser.id === chapter.authorId,
+                  delete:
+                    parseInt(data?.currentUser.id ?? "") === chapter.authorId,
+                  edit:
+                    parseInt(data?.currentUser.id ?? "") === chapter.authorId,
+                  readLater:
+                    parseInt(data?.currentUser.id ?? "") !== chapter.authorId,
+                  publish:
+                    parseInt(data?.currentUser.id ?? "") === chapter.authorId,
                 }}
               />
             </div>

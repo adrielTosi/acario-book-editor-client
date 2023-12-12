@@ -33,223 +33,224 @@ import { ServerSideProps } from "types/ServerSideProps";
 type StoryProps = ServerSideProps<GetChapterQuery>;
 
 const Story: NextPage<StoryProps> = ({ error, data }) => {
-  if (error) {
-    toast(error, { toastId: "error-on-view-story" });
-    return null;
-  } else {
-    const client = useApolloClient();
-    const editor = useTipTap({ content: data.getChapter.text, readOnly: true });
+  toast(error, { toastId: "error-on-view-story" });
 
-    const { data: user } = useCurrentUser();
-    const [comment] = useCreateCommentMutation();
-    const [deleteComment] = useDeleteCommentMutation();
-    const [editComment] = useEditCommentMutation();
+  const client = useApolloClient();
+  const editor = useTipTap({ content: data.getChapter.text, readOnly: true });
 
-    const [commentInput, setComment] = useState("");
-    const [isCommenting, toggleCommenting] = useState(false);
-    const [isEditing, toggleEditing] = useState(false);
-    const isOwner = user?.currentUser.id === data.getChapter.authorId;
+  const { data: user } = useCurrentUser();
+  const [comment] = useCreateCommentMutation();
+  const [deleteComment] = useDeleteCommentMutation();
+  const [editComment] = useEditCommentMutation();
 
-    // LIVE CACHEDD COMMENTS DATA
-    const cacheData = client.readFragment<{
-      comments: CommentFragment[];
-      status: ChapterStatus;
-    }>({
-      id: "Chapter:" + data.getChapter.id,
-      fragment: gql`
-        fragment ____ on Chapter {
-          status
-          comments {
+  const [commentInput, setComment] = useState("");
+  const [isCommenting, toggleCommenting] = useState(false);
+  const [isEditing, toggleEditing] = useState(false);
+  const isOwner = parseInt(user?.currentUser.id ?? "") === data.getChapter.id;
+
+  // LIVE CACHEDD COMMENTS DATA
+  const cacheData = client.readFragment<{
+    comments: CommentFragment[];
+    status: ChapterStatus;
+  }>({
+    id: "Chapter:" + data.getChapter.id,
+    fragment: gql`
+      fragment ____ on Chapter {
+        status
+        comments {
+          id
+          text
+          author {
             id
-            text
-            author {
-              id
-              username
-              name
-              avatarType
-              avatarSeed
-            }
-            chapterId
-            createdAt
-            updatedAt
+            username
+            name
+            avatarType
+            avatarSeed
           }
+          chapterId
+          createdAt
+          updatedAt
         }
-      `,
-    });
-
-    const handleChange: ChangeEventHandler<HTMLTextAreaElement> = (e) => {
-      setComment(e.target.value);
-    };
-
-    const handleAddComment = async () => {
-      try {
-        await comment({
-          variables: {
-            data: { text: commentInput, chapterId: data.getChapter.id },
-          },
-          update(cache, { data: newCommentData }) {
-            cache.modify({
-              id: "Chapter:" + data.getChapter.id,
-              fields: {
-                comments(cachedComments = []) {
-                  const newComment = cache.writeFragment({
-                    data: newCommentData?.createComment,
-                    fragment: gql`
-                      fragment NewComment on Comment {
-                        id
-                        text
-                        author {
-                          id
-                          username
-                          name
-                          avatarType
-                          avatarSeed
-                        }
-                        chapterId
-                        createdAt
-                        updatedAt
-                      }
-                    `,
-                  });
-                  return [newComment, ...cachedComments];
-                },
-              },
-            });
-          },
-        });
-
-        toggleCommenting(false);
-      } catch (err: any) {
-        toast(err.message, {
-          toastId: "comment-error",
-        });
       }
-    };
+    `,
+  });
 
-    const handleDeleteComment = async (id: string) => {
-      try {
-        const sure = confirm("Are you sure?");
-        if (sure) {
-          await deleteComment({
-            variables: { id },
-            update(cache) {
-              const normalizedId = cache.identify({
-                id,
-                __typename: "Comment",
-              });
-              cache.evict({ id: normalizedId });
-              cache.gc();
+  const handleChange: ChangeEventHandler<HTMLTextAreaElement> = (e) => {
+    setComment(e.target.value);
+  };
+
+  const handleAddComment = async () => {
+    try {
+      await comment({
+        variables: {
+          data: { text: commentInput, chapterId: data.getChapter.id },
+        },
+        update(cache, { data: newCommentData }) {
+          cache.modify({
+            id: "Chapter:" + data.getChapter.id,
+            fields: {
+              comments(cachedComments = []) {
+                const newComment = cache.writeFragment({
+                  data: newCommentData?.createComment,
+                  fragment: gql`
+                    fragment NewComment on Comment {
+                      id
+                      text
+                      author {
+                        id
+                        username
+                        name
+                        avatarType
+                        avatarSeed
+                      }
+                      chapterId
+                      createdAt
+                      updatedAt
+                    }
+                  `,
+                });
+                return [newComment, ...cachedComments];
+              },
             },
           });
-        }
-      } catch (err: any) {
-        toast(err.message, {
-          toastId: data.getChapter.dislikes,
-        });
-      }
-    };
+        },
+      });
 
-    const handleEditComment = async (id: string, text: string) => {
-      try {
-        await editComment({
-          variables: { id, text },
+      toggleCommenting(false);
+    } catch (err: any) {
+      toast(err.message, {
+        toastId: "comment-error",
+      });
+    }
+  };
+
+  const handleDeleteComment = async (id: string) => {
+    try {
+      const sure = confirm("Are you sure?");
+      if (sure) {
+        await deleteComment({
+          variables: { id: parseInt(id) },
           update(cache) {
-            cache.modify({
-              id: "Comment:" + id,
-              fields: {
-                text() {
-                  return text;
-                },
-              },
+            const normalizedId = cache.identify({
+              id,
+              __typename: "Comment",
             });
+            cache.evict({ id: normalizedId });
+            cache.gc();
           },
         });
-        toggleEditing(false);
-      } catch (err: any) {
-        toast(err.message, {
-          toastId: id,
-        });
       }
-    };
+    } catch (err: any) {
+      toast(err.message, {
+        toastId: data.getChapter.dislikes,
+      });
+    }
+  };
 
-    return (
-      <Box className="container is-max-desktop" padding="0 8px">
-        {/* TITLE */}
-        <PageTitle text={data.getChapter.title} />
-        <Box marginBottom="2em" mt="1em" color={theme.colors.contrast_med}>
-          <Text>{data.getChapter.description}</Text>
-        </Box>
-        {data.getChapter.tags?.map((tag) => (
-          <Pill text={tag.label} />
-        ))}
+  const handleEditComment = async (id: string, text: string) => {
+    console.log("id", id, typeof id);
+    try {
+      await editComment({
+        variables: { id: parseInt(id), text },
+        update(cache) {
+          cache.modify({
+            id: "Comment:" + id,
+            fields: {
+              text() {
+                return text;
+              },
+            },
+          });
+        },
+      });
+      toggleEditing(false);
+    } catch (err: any) {
+      toast(err.message, {
+        toastId: id,
+      });
+    }
+  };
 
-        {/* TEXT */}
+  if (error) {
+    return null;
+  }
 
-        {/* <Box position="relative">
+  return (
+    <Box className="container is-max-desktop" padding="0 8px">
+      {/* TITLE */}
+      <PageTitle text={data.getChapter.title} />
+      <Box marginBottom="2em" mt="1em" color={theme.colors.contrast_med}>
+        <Text>{data.getChapter.description}</Text>
+      </Box>
+      {data.getChapter.tags?.map((tag) => (
+        <Pill text={tag.tag?.label ?? ""} key={tag.tagId} />
+      ))}
+
+      {/* TEXT */}
+
+      {/* <Box position="relative">
           <ExpandButton />
         </Box> */}
-        <TextEditor editor={editor} readOnly={true} />
+      <TextEditor editor={editor} readOnly={true} />
 
-        {/* INTERACTIONS */}
-        <Box
-          padding="1em 0"
-          borderBottom={`1px solid ${theme.colors.bg_comp_1_light}`}
-        >
-          <ActionsBar
-            props={{
-              ...data.getChapter,
-              showActions: {
-                readLater: user?.currentUser.id !== data.getChapter.authorId,
-                publish: true,
-                delete: true,
-                edit: true,
-              },
-            }}
-            onCommentClick={() => toggleCommenting((prev) => !prev)}
-          />
-        </Box>
-
-        {/* ADD COMMENTS */}
-        {isCommenting && (
-          <Box mt="1em">
-            <StyledField
-              as="textarea"
-              value={commentInput}
-              onChange={handleChange}
-            />
-            <Box textAlign="end">
-              <Button
-                padding="4px 6px"
-                variant="primary"
-                mt="8px"
-                onClick={handleAddComment}
-              >
-                Send
-              </Button>
-            </Box>
-          </Box>
-        )}
-
-        {/* COMMENTS */}
-        <Box mt="1em" id="comments">
-          {cacheData?.comments?.map((comment) => (
-            <Box mb="1em" key={comment.id}>
-              <Comment
-                data={{ ...comment }}
-                owner={user?.currentUser.id}
-                handleDelete={handleDeleteComment}
-                toggleEditing={() => toggleEditing((prev) => !prev)}
-                isEditing={isEditing}
-                handleEdit={handleEditComment}
-              />
-            </Box>
-          ))}
-        </Box>
+      {/* INTERACTIONS */}
+      <Box
+        padding="1em 0"
+        borderBottom={`1px solid ${theme.colors.bg_comp_1_light}`}
+      >
+        <ActionsBar
+          props={{
+            ...data.getChapter,
+            showActions: {
+              readLater: isOwner,
+              publish: true,
+              delete: true,
+              edit: true,
+            },
+          }}
+          onCommentClick={() => toggleCommenting((prev) => !prev)}
+        />
       </Box>
-    );
-  }
-};
 
+      {/* ADD COMMENTS */}
+      {isCommenting && (
+        <Box mt="1em">
+          <StyledField
+            as="textarea"
+            value={commentInput}
+            onChange={handleChange}
+          />
+          <Box textAlign="end">
+            <Button
+              padding="4px 6px"
+              variant="primary"
+              mt="8px"
+              onClick={handleAddComment}
+            >
+              Send
+            </Button>
+          </Box>
+        </Box>
+      )}
+
+      {/* COMMENTS */}
+      <Box mt="1em" id="comments">
+        {cacheData?.comments?.map((comment) => (
+          <Box mb="1em" key={comment.id}>
+            <Comment
+              data={{ ...comment }}
+              owner={user?.currentUser.id}
+              handleDelete={handleDeleteComment}
+              toggleEditing={() => toggleEditing((prev) => !prev)}
+              isEditing={isEditing}
+              handleEdit={handleEditComment}
+            />
+          </Box>
+        ))}
+      </Box>
+    </Box>
+  );
+};
 const EditButton = styled(Link)`
   background-color: ${(props) => props.theme.colors.accent_1_200};
   padding: 8px;
@@ -264,7 +265,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const res = await ssrGetChapter.getServerPage(
       {
-        variables: { chapterId: params ? (params.id as string) : "" },
+        variables: { chapterId: params ? parseInt(params.id as string) : 0 },
         notifyOnNetworkStatusChange: true,
         context: {
           headers: {

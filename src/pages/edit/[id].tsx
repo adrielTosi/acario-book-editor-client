@@ -18,6 +18,8 @@ import { ServerSideProps } from "types/ServerSideProps";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { IS_CLIENT_SIDE } from "lib/contants";
+import genres from "../../assets/genreArray.json";
+import { MultiSelect } from "components/ui/MultiSelect";
 type EditProps = ServerSideProps<GetChapterQuery>;
 
 const CreateSchema = Yup.object().shape({
@@ -25,81 +27,91 @@ const CreateSchema = Yup.object().shape({
   description: Yup.string()
     .max(400, "Too long, please make it shorter!")
     .required(),
+  tags: Yup.array().max(4, "Maximum of 4 tag values").nullable(),
 });
 
 const Edit: NextPage<EditProps> = ({ error, data }) => {
   usePrivateRoute();
+  const { data: user } = useCurrentUser();
+  const editor = useTipTap({ content: data.getChapter.text });
+  const isOwner =
+    parseInt(user?.currentUser.id ?? "") === data.getChapter.authorId;
+
+  if (!isOwner && user && IS_CLIENT_SIDE) {
+    toast("You tried editing a story from someone else.", {
+      toastId: "error-on-edit-story-not-owner",
+    });
+    router.push("/dashboard");
+  }
+
+  const [updateChapter] = useUpdateChapterMutation();
+
+  const initialValues = {
+    title: data.getChapter.title,
+    description: data.getChapter.description,
+    tags:
+      data.getChapter.tags?.map((tag) => ({
+        label: tag.tag?.label || "",
+        value: tag.tag?.value || "",
+      })) || [],
+  };
+
+  const handleSubmit = async ({
+    title,
+    description,
+    tags,
+  }: typeof initialValues) => {
+    const text = editor?.getHTML().toString();
+    if (text) {
+      try {
+        await updateChapter({
+          variables: {
+            chapterData: {
+              title,
+              description,
+              text,
+              chapterId: data.getChapter.id,
+              tags,
+            },
+          },
+        });
+        router.push(`/story/${data.getChapter.id}`);
+      } catch (err) {
+        toast((err as any).message, {
+          toastId: "error-on-edit-story-not-owner",
+        });
+      }
+    }
+  };
+
   if (error) {
     toast(error, { toastId: "error-on-edit-story" });
     if (IS_CLIENT_SIDE) {
       router.push("/");
     }
     return null;
-  } else {
-    const { data: user } = useCurrentUser();
-    const editor = useTipTap({ content: data.getChapter.text });
-    const isOwner = user?.currentUser.id === data.getChapter.authorId;
+  }
 
-    console.log(user?.currentUser.id, data.getChapter.authorId);
+  return (
+    <Box className="container is-max-desktop" padding="0 8px">
+      <Formik
+        initialValues={initialValues}
+        validationSchema={CreateSchema}
+        onSubmit={(values) => {
+          handleSubmit(values);
+          // console.log(values);
+        }}
+      >
+        {({ errors, values, handleChange, setFieldValue }) => (
+          <Form>
+            <Box mb="1em">
+              <StyledLabel htmlFor="title">Title: </StyledLabel>
+              <StyledField name="title" type="text" />
+              {errors && <span>{errors.title}</span>}
+            </Box>
 
-    if (!isOwner && user && IS_CLIENT_SIDE) {
-      toast("You tried editing a story from someone else.", {
-        toastId: "error-on-edit-story-not-owner",
-      });
-      router.push("/dashboard");
-    }
-
-    const [updateChapter] = useUpdateChapterMutation();
-
-    const initialValues = {
-      title: data.getChapter.title,
-      description: data.getChapter.description,
-    };
-
-    const handleSubmit = async ({
-      title,
-      description,
-    }: typeof initialValues) => {
-      const text = editor?.getHTML().toString();
-      if (text) {
-        try {
-          await updateChapter({
-            variables: {
-              chapterData: {
-                title,
-                description,
-                text,
-                chapterId: data.getChapter.id,
-              },
-            },
-          });
-          router.push(`/story/${data.getChapter.id}`);
-        } catch (err) {
-          toast((err as any).message, {
-            toastId: "error-on-edit-story-not-owner",
-          });
-        }
-      }
-    };
-
-    return (
-      <Box className="container is-max-desktop" padding="0 8px">
-        <Formik
-          initialValues={initialValues}
-          validationSchema={CreateSchema}
-          onSubmit={(values) => {
-            handleSubmit(values);
-          }}
-        >
-          {({ errors, values, handleChange }) => (
-            <Form>
-              <Box mb="1em">
-                <StyledLabel htmlFor="title">Title: </StyledLabel>
-                <StyledField name="title" type="text" />
-                {errors && <span>{errors.title}</span>}
-              </Box>
-
-              <Box mb="1em">
+            <Box mb="1em" className="columns">
+              <div className="column is-6">
                 <Box
                   display="flex"
                   justifyContent="space-between"
@@ -114,21 +126,39 @@ const Edit: NextPage<EditProps> = ({ error, data }) => {
                   name="description"
                   as="textarea"
                   onChange={handleChange}
-                  value={values.description}
                 />
                 {errors && <span>{errors.description}</span>}
-              </Box>
+              </div>
+              <div className="column is-6">
+                <StyledLabel htmlFor="tags">Tags: </StyledLabel>
+                <MultiSelect
+                  values={values.tags || undefined}
+                  options={genres}
+                  name="tags"
+                  allowCreate
+                  onChange={(allValues: any) => {
+                    setFieldValue(
+                      "tags",
+                      allValues.map((value: any) => ({
+                        value: value.value,
+                        label: value.label,
+                      }))
+                    );
+                  }}
+                />
+                {errors && <span>{errors.tags}</span>}
+              </div>
+            </Box>
 
-              <TextEditor editor={editor} />
-              <Box mt="1em" textAlign="right">
-                <Button type="submit">Update</Button>
-              </Box>
-            </Form>
-          )}
-        </Formik>
-      </Box>
-    );
-  }
+            <TextEditor editor={editor} />
+            <Box mt="1em" textAlign="right">
+              <Button type="submit">Update</Button>
+            </Box>
+          </Form>
+        )}
+      </Formik>
+    </Box>
+  );
 };
 
 export default withApollo(Edit);
@@ -139,7 +169,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const res = await ssrGetChapter.getServerPage(
       {
-        variables: { chapterId: params ? (params.id as string) : "" },
+        variables: { chapterId: params ? parseInt(params.id as string) : 0 },
         notifyOnNetworkStatusChange: true,
       },
       context

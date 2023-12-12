@@ -1,4 +1,4 @@
-mutation DeleteComment($id: String!) {
+mutation DeleteComment($id: Float!) {
   deleteComment(id: $id) {
     ...Comment
   }

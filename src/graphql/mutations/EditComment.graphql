@@ -1,4 +1,4 @@
-mutation EditComment($id: String!, $text: String!) {
+mutation EditComment($id: Float!, $text: String!) {
   updateComment(id: $id, text: $text) {
     ...Comment
   }

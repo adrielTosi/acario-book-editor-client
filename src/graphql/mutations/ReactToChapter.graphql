@@ -1,4 +1,4 @@
-mutation ReactToChapter($value: Float!, $id: String!) {
+mutation ReactToChapter($value: Float!, $id: Float!) {
   reactToChapter(value: $value, id: $id) {
     chapter {
       ...Chapter

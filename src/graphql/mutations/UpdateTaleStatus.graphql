@@ -1,4 +1,4 @@
-mutation UpdateStatus($id: String!, $newStatus: ChapterStatus!) {
+mutation UpdateStatus($id: Float!, $newStatus: ChapterStatus!) {
   changeStatus(id: $id, newStatus: $newStatus) {
     ...Chapter
   }

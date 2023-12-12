@@ -1,4 +1,4 @@
-query GetChapter($chapterId: String!) {
+query GetChapter($chapterId: Float!) {
   getChapter(chapterId: $chapterId) {
     ...Chapter
   }
