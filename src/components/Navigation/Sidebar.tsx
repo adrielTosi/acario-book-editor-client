@@ -29,11 +29,6 @@ export const Sidebar = ({
   handleUnfollow,
   currentUserAlreadyFollows,
 }: SidebarProps) => {
-  const svg = useAvatar({
-    seed: data.getUser.avatarSeed,
-    type: data.getUser.avatarType,
-  });
-
   const router = useRouter();
   const currentPath = router.pathname;
 
@@ -47,7 +42,8 @@ export const Sidebar = ({
         mb="1em"
       >
         <UserMedia
-          avatar={svg}
+          avatarSeed={data.getUser.avatarSeed}
+          avatarType={data.getUser.avatarType}
           name={data.getUser.name}
           username={data.getUser.username}
         />

@@ -26,7 +26,7 @@ export const useAvatar = ({ seed, type }: UseAvatarProps) => {
 
       let svg = createAvatar(style, {
         seed,
-        backgroundColor: "white",
+        backgroundColor: "transparent",
         radius: 50,
         scale: 80,
       });

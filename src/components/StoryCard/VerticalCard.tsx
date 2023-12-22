@@ -3,7 +3,6 @@ import { H4Link } from "components/typography/Heading";
 import { Text } from "components/typography/Text";
 import { Box } from "components/ui/Box";
 import { Pill } from "components/ui/Pill";
-import { useAvatar } from "lib/hooks/useAvatar";
 import router from "next/router";
 import styled from "styled-components";
 import theme from "styles/theme";
@@ -11,10 +10,6 @@ import { ActionsBar } from "./ActionsBar";
 import { StoryCardProps } from "./StoryCard";
 
 export const VerticalFormat = (props: StoryCardProps) => {
-  const avatar = useAvatar({
-    seed: props.author.avatarSeed,
-    type: props.author.avatarType,
-  });
   const publishedDate = new Date(
     parseInt(props.createdAt)
   ).toLocaleDateString();
@@ -48,7 +43,8 @@ export const VerticalFormat = (props: StoryCardProps) => {
 
         <Details>
           <UserMedia
-            avatar={avatar}
+            avatarSeed={props.author.avatarSeed}
+            avatarType={props.author.avatarType}
             name={props.author.name}
             username={props.author.username}
             size="small"

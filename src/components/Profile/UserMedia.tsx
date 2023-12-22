@@ -1,11 +1,15 @@
 import { Text } from "components/typography/Text";
 import { AppLink } from "components/ui/AppLink";
+import { Avatar } from "components/ui/Avatar";
 import { Box } from "components/ui/Box";
+import { useAvatar } from "lib/hooks/useAvatar";
 import Link from "next/link";
 import styled, { css } from "styled-components";
 
 export type UserProps = {
-  avatar: string;
+  avatarSeed: string;
+  avatarType: string;
+  avatar?: string;
   username: string;
   name: string;
   size?: "small" | "regular";
@@ -13,6 +17,8 @@ export type UserProps = {
 
 export const UserMedia = ({
   avatar,
+  avatarSeed,
+  avatarType,
   username,
   name,
   size = "regular",
@@ -22,9 +28,7 @@ export const UserMedia = ({
   return (
     <Wrapper>
       <Box mr="0.5em">
-        <figure className={`image ${imageSize}`}>
-          <div dangerouslySetInnerHTML={{ __html: avatar }} />
-        </figure>
+        <Avatar seed={avatarSeed} type={avatarType} size={imageSize} />
       </Box>
       <div>
         <Text size={size}>{name}</Text>
